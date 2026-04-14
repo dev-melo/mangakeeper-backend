@@ -18,7 +18,7 @@ public class Colecao {
     private Boolean publico;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "usuario_id")
+    @JoinColumn(name = "usuario_id", nullable = false)
     private Usuario usuario;
 
     public Colecao(){}
