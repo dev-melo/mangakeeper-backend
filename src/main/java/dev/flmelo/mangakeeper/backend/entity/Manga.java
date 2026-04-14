@@ -15,6 +15,8 @@ public class Manga {
     @NotBlank
     private String titulo;
 
+    private String issn;
+
     @NotBlank
     private String autor;
 
@@ -38,8 +40,9 @@ public class Manga {
     public Manga() {
     }
 
-    public Manga(String titulo, String autor, String editora, String genero, String sinopse, Integer totalVolumes, Colecao colecao) {
+    public Manga(String titulo, String issn, String autor, String editora, String genero, String sinopse, Integer totalVolumes, Colecao colecao) {
         this.titulo = titulo;
+        this.issn = issn;
         this.autor = autor;
         this.editora = editora;
         this.genero = genero;
@@ -114,4 +117,11 @@ public class Manga {
     }
 
 
+    public String getIssn() {
+        return issn;
+    }
+
+    public void setIssn(String issn) {
+        this.issn = issn;
+    }
 }
