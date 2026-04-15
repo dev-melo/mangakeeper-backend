@@ -1,12 +1,17 @@
 package dev.flmelo.mangakeeper.backend.entity;
 
+import dev.flmelo.mangakeeper.backend.entity.enuns.Idioma;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
 @Entity
-@Table(name = "mangas")
+@Table(name = "mangas", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"colecao_id", "titulo", "idioma"})})
+
+
+
 public class Manga {
     @Id
     @GeneratedValue( strategy =  GenerationType.IDENTITY)
@@ -29,6 +34,10 @@ public class Manga {
     @NotBlank
     private String sinopse;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Idioma idioma;
+
     @NotNull
     @Positive
     private Integer totalVolumes;
@@ -40,13 +49,14 @@ public class Manga {
     public Manga() {
     }
 
-    public Manga(String titulo, String issn, String autor, String editora, String genero, String sinopse, Integer totalVolumes, Colecao colecao) {
+    public Manga(String titulo, String issn, String autor, String editora, String genero, String sinopse, Idioma idioma,Integer totalVolumes, Colecao colecao) {
         this.titulo = titulo;
         this.issn = issn;
         this.autor = autor;
         this.editora = editora;
         this.genero = genero;
         this.sinopse = sinopse;
+        this.idioma = idioma;
         this.totalVolumes = totalVolumes;
         this.colecao = colecao;
     }
@@ -123,5 +133,13 @@ public class Manga {
 
     public void setIssn(String issn) {
         this.issn = issn;
+    }
+
+    public Idioma getIdioma() {
+        return idioma;
+    }
+
+    public void setIdioma(Idioma idioma) {
+        this.idioma = idioma;
     }
 }
