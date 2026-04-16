@@ -1,13 +1,14 @@
 package dev.flmelo.mangakeeper.backend.controller;
 
+import dev.flmelo.mangakeeper.backend.dto.CreateUsuarioDTO;
 import dev.flmelo.mangakeeper.backend.dto.UsuarioResponseDTO;
 import dev.flmelo.mangakeeper.backend.service.UsuarioService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -30,5 +31,17 @@ public class UsuarioController {
     public ResponseEntity<UsuarioResponseDTO> getUsuarioById(@PathVariable Long id){
         UsuarioResponseDTO usuario = usuarioService.getById(id);
         return ResponseEntity.ok().body(usuario);
+    }
+
+    @PostMapping
+    public ResponseEntity<UsuarioResponseDTO> createUser(@Valid @RequestBody CreateUsuarioDTO request){
+        UsuarioResponseDTO usuarioSalvo = usuarioService.create(request);
+        URI uri = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(usuarioSalvo.id())
+                .toUri();
+
+        return ResponseEntity.created(uri).body(usuarioSalvo);
     }
 }
