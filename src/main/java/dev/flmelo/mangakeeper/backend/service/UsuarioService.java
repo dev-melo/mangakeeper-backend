@@ -1,10 +1,10 @@
 package dev.flmelo.mangakeeper.backend.service;
 
 import dev.flmelo.mangakeeper.backend.dto.CreateUsuarioDTO;
+import dev.flmelo.mangakeeper.backend.dto.UpdateUsuarioDTO;
 import dev.flmelo.mangakeeper.backend.dto.UsuarioResponseDTO;
 import dev.flmelo.mangakeeper.backend.entity.Usuario;
 import dev.flmelo.mangakeeper.backend.repository.UsuarioRepository;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -55,5 +55,31 @@ public class UsuarioService {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Não foi possivel criar o usuário. O username já está sendo usado.");
         }
 
+    }
+
+
+    public UsuarioResponseDTO updateUser(Long id, UpdateUsuarioDTO usuarioUpdate) {
+        Optional<Usuario> byId = usuarioRepository.findById(id);
+
+
+        if (byId.isEmpty()){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND ,"Usuario não encontrado: ID " + id);
+        }
+        Usuario u = byId.get();
+
+        if (usuarioUpdate.email() != null){
+            u.setEmail(usuarioUpdate.email());
+        }
+
+        if (usuarioUpdate.avatarUrl() != null){
+            u.setAvatarUrl(usuarioUpdate.avatarUrl());
+        }
+
+        if (usuarioUpdate.password() != null){
+            u.setPassword(usuarioUpdate.password());
+        }
+
+        usuarioRepository.save(u);
+        return new UsuarioResponseDTO(u.getId(), u.getUsername(), u.getAvatarUrl());
     }
 }

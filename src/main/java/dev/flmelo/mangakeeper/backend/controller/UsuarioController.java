@@ -1,6 +1,7 @@
 package dev.flmelo.mangakeeper.backend.controller;
 
 import dev.flmelo.mangakeeper.backend.dto.CreateUsuarioDTO;
+import dev.flmelo.mangakeeper.backend.dto.UpdateUsuarioDTO;
 import dev.flmelo.mangakeeper.backend.dto.UsuarioResponseDTO;
 import dev.flmelo.mangakeeper.backend.service.UsuarioService;
 import jakarta.validation.Valid;
@@ -44,4 +45,13 @@ public class UsuarioController {
 
         return ResponseEntity.created(uri).body(usuarioSalvo);
     }
+
+    @PatchMapping(value = "/{id}")
+    public ResponseEntity<UsuarioResponseDTO> updateUsuario(@Valid @PathVariable Long id, @RequestBody UpdateUsuarioDTO usuarioUpdate){
+        UsuarioResponseDTO usuarioAtualizado = usuarioService.updateUser(id, usuarioUpdate);
+
+        return ResponseEntity.ok().body(usuarioAtualizado);
+    }
+
+
 }
