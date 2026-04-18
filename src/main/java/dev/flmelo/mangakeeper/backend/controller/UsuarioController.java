@@ -53,5 +53,9 @@ public class UsuarioController {
         return ResponseEntity.ok().body(usuarioAtualizado);
     }
 
-
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<?> delete(@PathVariable Long id){
+        usuarioService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
 }

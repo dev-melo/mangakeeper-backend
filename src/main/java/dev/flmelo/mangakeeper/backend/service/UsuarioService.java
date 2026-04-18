@@ -82,4 +82,12 @@ public class UsuarioService {
         usuarioRepository.save(u);
         return new UsuarioResponseDTO(u.getId(), u.getUsername(), u.getAvatarUrl());
     }
+
+    public void delete(Long id){
+        Optional<Usuario> usuario = usuarioRepository.findById(id);
+        if (usuario.isEmpty()){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND ,"Usuario não encontrado: ID " + id);
+        }
+        usuarioRepository.deleteById(id);
+    }
 }
