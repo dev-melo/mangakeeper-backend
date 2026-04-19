@@ -1,4 +1,4 @@
-package dev.flmelo.mangakeeper.backend.dto;
+package dev.flmelo.mangakeeper.backend.dto.usuario;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Email;

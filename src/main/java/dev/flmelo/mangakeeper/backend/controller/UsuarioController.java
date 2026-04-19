@@ -1,8 +1,8 @@
 package dev.flmelo.mangakeeper.backend.controller;
 
-import dev.flmelo.mangakeeper.backend.dto.CreateUsuarioDTO;
-import dev.flmelo.mangakeeper.backend.dto.UpdateUsuarioDTO;
-import dev.flmelo.mangakeeper.backend.dto.UsuarioResponseDTO;
+import dev.flmelo.mangakeeper.backend.dto.usuario.CreateUsuarioDTO;
+import dev.flmelo.mangakeeper.backend.dto.usuario.UpdateUsuarioDTO;
+import dev.flmelo.mangakeeper.backend.dto.usuario.UsuarioResponseDTO;
 import dev.flmelo.mangakeeper.backend.service.UsuarioService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
