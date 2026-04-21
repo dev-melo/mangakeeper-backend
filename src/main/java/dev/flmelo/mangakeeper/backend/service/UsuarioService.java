@@ -1,8 +1,8 @@
 package dev.flmelo.mangakeeper.backend.service;
 
-import dev.flmelo.mangakeeper.backend.dto.CreateUsuarioDTO;
-import dev.flmelo.mangakeeper.backend.dto.UpdateUsuarioDTO;
-import dev.flmelo.mangakeeper.backend.dto.UsuarioResponseDTO;
+import dev.flmelo.mangakeeper.backend.dto.usuario.CreateUsuarioDTO;
+import dev.flmelo.mangakeeper.backend.dto.usuario.UpdateUsuarioDTO;
+import dev.flmelo.mangakeeper.backend.dto.usuario.UsuarioResponseDTO;
 import dev.flmelo.mangakeeper.backend.entity.Usuario;
 import dev.flmelo.mangakeeper.backend.repository.UsuarioRepository;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -57,8 +57,7 @@ public class UsuarioService {
 
     }
 
-
-    public UsuarioResponseDTO updateUser(Long id, UpdateUsuarioDTO usuarioUpdate) {
+    public UsuarioResponseDTO updateUsuario(Long id, UpdateUsuarioDTO usuarioUpdate) {
         Optional<Usuario> byId = usuarioRepository.findById(id);
 
 
