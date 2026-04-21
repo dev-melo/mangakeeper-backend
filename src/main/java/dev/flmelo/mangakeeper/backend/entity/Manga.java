@@ -32,6 +32,7 @@ public class Manga {
     private String genero;
 
     @NotBlank
+    @Column(columnDefinition = "TEXT")
     private String sinopse;
 
     @Enumerated(EnumType.STRING)
