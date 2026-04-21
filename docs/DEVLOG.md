@@ -39,4 +39,17 @@ localhost:8080/colecoes/
 Tirar o / depois de colecoes/
 Ficando localhost:8080/colecoes
 
+---
+
+### Problema
+"status": 400, "error": "Bad Request", "trace": "org.springframework.web.server.ResponseStatusException: 400 BAD_REQUEST
+Mesmo mandando corretamente o JSON
+
+### Causa
+O campo nomeColecao em ColecaoService update voltava como null / vazio ..
+Erro no ColecaoController
+
+### Solução
+updateColecao(@Valid @PathVariable Long id, UpdateColecaoDTO colecaoUpdate) < estava faltando @RequestBody
+
 
