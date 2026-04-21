@@ -6,10 +6,10 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 public record CreateColecaoDTO(
-        @NotBlank
+
         String nome,
 
-        @NotNull
+
         @JsonProperty(value = "usuario_id")
         Long usuarioId
 
