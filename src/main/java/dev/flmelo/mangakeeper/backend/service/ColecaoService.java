@@ -1,8 +1,11 @@
 package dev.flmelo.mangakeeper.backend.service;
 
 import dev.flmelo.mangakeeper.backend.dto.colecao.ColecaoResponseDTO;
+import dev.flmelo.mangakeeper.backend.dto.colecao.CreateColecaoDTO;
 import dev.flmelo.mangakeeper.backend.entity.Colecao;
+import dev.flmelo.mangakeeper.backend.entity.Usuario;
 import dev.flmelo.mangakeeper.backend.repository.ColecaoRepository;
+import dev.flmelo.mangakeeper.backend.repository.UsuarioRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -13,9 +16,11 @@ import java.util.Optional;
 @Service
 public class ColecaoService {
     private final ColecaoRepository colecaoRepository;
+    private final UsuarioRepository usuarioRepository;
 
-    public ColecaoService(ColecaoRepository colecaoRepository) {
+    public ColecaoService(ColecaoRepository colecaoRepository, UsuarioRepository usuarioRepository) {
         this.colecaoRepository = colecaoRepository;
+        this.usuarioRepository = usuarioRepository;
     }
 
 
@@ -43,6 +48,42 @@ public class ColecaoService {
                 colecao.getNome(),
                 colecao.getPublico(),
                 colecao.getUsuario().getId());
+
+    }
+
+    public ColecaoResponseDTO create(CreateColecaoDTO request){
+        Colecao novaColecao = new Colecao();
+
+        Optional<Usuario> usuario = usuarioRepository.findById(request.usuarioId());
+
+        if (usuario.isEmpty()){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario não encontrado.");
+        }
+
+        Usuario u = usuario.get();
+
+        //Set Nome da Coleção
+        if (request.nome() == null || request.nome().trim().isEmpty() ){
+            novaColecao.setNome("Coleção de " + u.getUsername().trim());
+
+        } else {
+            novaColecao.setNome(request.nome().trim());
+        }
+
+        //Set Pulico True
+        novaColecao.setPublico(true);
+
+        // Set Usuario ID
+        novaColecao.setUsuario(u);
+
+        colecaoRepository.save(novaColecao);
+
+        return new ColecaoResponseDTO(
+                novaColecao.getId(),
+                novaColecao.getNome(),
+                novaColecao.getPublico(),
+                novaColecao.getUsuario().getId()
+        );
 
     }
 }
