@@ -86,4 +86,12 @@ public class ColecaoService {
         );
 
     }
+
+    public void delete(Long id){
+        Optional<Colecao> colecao = colecaoRepository.findById(id);
+        if (colecao.isEmpty()){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Coleção não encontrado. ID: " + id);
+        }
+        colecaoRepository.deleteById(id);
+    }
 }

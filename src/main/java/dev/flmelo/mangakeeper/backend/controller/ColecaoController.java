@@ -40,4 +40,10 @@ public class ColecaoController {
         return ResponseEntity.created(uri).body(colecaoCriada);
 
     }
+
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<?> delete(@PathVariable Long id){
+        colecaoService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
 }
