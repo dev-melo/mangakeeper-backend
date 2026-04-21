@@ -57,8 +57,7 @@ public class UsuarioService {
 
     }
 
-
-    public UsuarioResponseDTO updateUser(Long id, UpdateUsuarioDTO usuarioUpdate) {
+    public UsuarioResponseDTO updateUsuario(Long id, UpdateUsuarioDTO usuarioUpdate) {
         Optional<Usuario> byId = usuarioRepository.findById(id);
 
 

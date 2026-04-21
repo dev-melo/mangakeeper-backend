@@ -2,6 +2,7 @@ package dev.flmelo.mangakeeper.backend.controller;
 
 import dev.flmelo.mangakeeper.backend.dto.colecao.ColecaoResponseDTO;
 import dev.flmelo.mangakeeper.backend.dto.colecao.CreateColecaoDTO;
+import dev.flmelo.mangakeeper.backend.dto.colecao.UpdateColecaoDTO;
 import dev.flmelo.mangakeeper.backend.service.ColecaoService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -39,6 +40,12 @@ public class ColecaoController {
                 .fromCurrentRequest().path("/{id}").buildAndExpand(colecaoCriada.id()).toUri();
         return ResponseEntity.created(uri).body(colecaoCriada);
 
+    }
+
+    @PatchMapping(value = "/{id}")
+    public ResponseEntity<ColecaoResponseDTO> updateColecao(@Valid @PathVariable Long id,@RequestBody UpdateColecaoDTO colecaoUpdate){
+        ColecaoResponseDTO colecao = colecaoService.updateColecao(id, colecaoUpdate);
+        return ResponseEntity.ok().body(colecao);
     }
 
     @DeleteMapping(value = "/{id}")

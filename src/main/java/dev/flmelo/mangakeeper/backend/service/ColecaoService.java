@@ -2,6 +2,7 @@ package dev.flmelo.mangakeeper.backend.service;
 
 import dev.flmelo.mangakeeper.backend.dto.colecao.ColecaoResponseDTO;
 import dev.flmelo.mangakeeper.backend.dto.colecao.CreateColecaoDTO;
+import dev.flmelo.mangakeeper.backend.dto.colecao.UpdateColecaoDTO;
 import dev.flmelo.mangakeeper.backend.entity.Colecao;
 import dev.flmelo.mangakeeper.backend.entity.Usuario;
 import dev.flmelo.mangakeeper.backend.repository.ColecaoRepository;
@@ -85,6 +86,29 @@ public class ColecaoService {
                 novaColecao.getUsuario().getId()
         );
 
+    }
+
+    public ColecaoResponseDTO updateColecao(Long id, UpdateColecaoDTO updateColecaoDTO){
+        Optional<Colecao> colecaoAntiga = colecaoRepository.findById(id);
+        if (colecaoAntiga.isEmpty()){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Coleção não encontrada. ID: " + id);
+        }
+
+        String nomeColecao = updateColecaoDTO.nome();
+        Colecao c = colecaoAntiga.get();
+        if (nomeColecao != null && !nomeColecao.trim().isEmpty()){
+            c.setNome(nomeColecao.trim());
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Nome da coleção inválido");
+        }
+
+        colecaoRepository.save(c);
+        return new ColecaoResponseDTO(
+                c.getId(),
+                c.getNome(),
+                c.getPublico(),
+                c.getUsuario().getId()
+        );
     }
 
     public void delete(Long id){
