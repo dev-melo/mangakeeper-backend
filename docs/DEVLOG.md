@@ -23,3 +23,20 @@ Jackson não mapeava snake_case automaticamente
 Uso de @JsonProperty("avatar_url")
 
 ---
+
+## CRUD Coleções
+
+### Problema
+"error": "Not Found"
+org.springframework.web.servlet.resource.
+NoResourceFoundException: No static resource colecoes
+
+### Causa
+Ao criar uma requisição no Postman usando POST com a url:
+localhost:8080/colecoes/
+
+### Solução
+Tirar o / depois de colecoes/
+Ficando localhost:8080/colecoes
+
+
