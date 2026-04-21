@@ -8,7 +8,6 @@ import jakarta.validation.constraints.NotNull;
 public record CreateColecaoDTO(
         @NotBlank
         String nome,
-        Boolean publico,
 
         @NotNull
         @JsonProperty(value = "usuario_id")
