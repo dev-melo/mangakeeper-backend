@@ -4,6 +4,7 @@ import dev.flmelo.mangakeeper.backend.dto.colecao.ColecaoResponseDTO;
 import dev.flmelo.mangakeeper.backend.service.ColecaoService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -22,5 +23,11 @@ public class ColecaoController {
     public ResponseEntity<List<ColecaoResponseDTO>> getAll(){
         List<ColecaoResponseDTO> list = colecaoService.getAll();
         return ResponseEntity.ok().body(list);
+    }
+
+    @GetMapping(value = "/{id}")
+    public ResponseEntity<ColecaoResponseDTO> getById(@PathVariable Long id){
+        ColecaoResponseDTO colecao = colecaoService.getById(id);
+        return ResponseEntity.ok().body(colecao);
     }
 }
