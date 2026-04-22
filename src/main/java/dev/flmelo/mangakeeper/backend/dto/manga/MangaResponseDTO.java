@@ -14,6 +14,7 @@ public record MangaResponseDTO(
         @JsonProperty(value = "total_volumes")
         Integer totalVolumes,
         Idioma idioma,
+        @JsonProperty("colecao_id")
         Long colecaoId
 ) {
 }

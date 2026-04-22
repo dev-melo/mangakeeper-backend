@@ -1,13 +1,14 @@
 package dev.flmelo.mangakeeper.backend.controller;
 
+import dev.flmelo.mangakeeper.backend.dto.manga.CreateMangaDTO;
 import dev.flmelo.mangakeeper.backend.dto.manga.MangaResponseDTO;
 import dev.flmelo.mangakeeper.backend.service.MangaService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -30,5 +31,17 @@ public class MangaController {
     public ResponseEntity<MangaResponseDTO> getById(@PathVariable Long id){
         MangaResponseDTO manga = mangaService.getById(id);
         return ResponseEntity.ok().body(manga);
+    }
+
+    @PostMapping
+    public ResponseEntity<MangaResponseDTO> create(@Valid @RequestBody CreateMangaDTO request){
+        MangaResponseDTO mangaCriado = mangaService.create(request);
+        URI uri = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(mangaCriado.id())
+                .toUri();
+
+        return ResponseEntity.created(uri).body(mangaCriado);
     }
 }
