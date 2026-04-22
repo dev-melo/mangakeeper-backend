@@ -106,7 +106,62 @@ public class MangaService {
     }
 
     public MangaResponseDTO update(Long id, UpdateMangaDTO request){
+        Optional<Manga> mangaById = mangaRepository.findById(id);
+        if (mangaById.isEmpty()){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Mangá não encontrada.");
+        }
+        Manga m = mangaById.get();
 
+        if (request.titulo() != null){
+            String titulo = clean(request.titulo());
+            m.setTitulo(titulo);
+        }
+        if (request.autor() != null){
+            String autor = clean(request.autor());
+            m.setAutor(autor);
+        }
+        if (request.editora() != null){
+            String editora = clean(request.editora());
+            m.setEditora(editora);
+        }
+        if (request.genero() != null){
+            String genero = clean(request.genero());
+            m.setGenero(genero);
+        }
+        if (request.sinopse() != null){
+            String sinopse = clean(request.sinopse());
+            m.setSinopse(sinopse);
+        }
+        if (request.issn() != null){
+            String issn = clean(request.issn());
+            m.setIssn(issn);
+        }
+        if (request.totalVolumes() != null){
+            m.setTotalVolumes(request.totalVolumes());
+        }
+        if (request.idioma() != null){
+            m.setIdioma(request.idioma());
+        }
+
+        Manga mangaSalvo = mangaRepository.save(m);
+
+        return new MangaResponseDTO(
+                mangaSalvo.getId(),
+                mangaSalvo.getTitulo(),
+                mangaSalvo.getAutor(),
+                mangaSalvo.getEditora(),
+                mangaSalvo.getGenero(),
+                mangaSalvo.getSinopse(),
+                mangaSalvo.getIssn(),
+                mangaSalvo.getTotalVolumes(),
+                mangaSalvo.getIdioma(),
+                mangaSalvo.getColecao().getId()
+        );
+
+    }
+
+    private String clean(String titulo) {
+        return titulo.trim();
     }
 
     public void delete(Long id){

@@ -2,6 +2,8 @@ package dev.flmelo.mangakeeper.backend.controller;
 
 import dev.flmelo.mangakeeper.backend.dto.manga.CreateMangaDTO;
 import dev.flmelo.mangakeeper.backend.dto.manga.MangaResponseDTO;
+import dev.flmelo.mangakeeper.backend.dto.manga.UpdateMangaDTO;
+import dev.flmelo.mangakeeper.backend.entity.Manga;
 import dev.flmelo.mangakeeper.backend.service.MangaService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -43,6 +45,12 @@ public class MangaController {
                 .toUri();
 
         return ResponseEntity.created(uri).body(mangaCriado);
+    }
+
+    @PatchMapping(value = "/{id}")
+    public ResponseEntity<MangaResponseDTO> updateManga(@Valid @PathVariable Long id, @RequestBody UpdateMangaDTO request){
+        MangaResponseDTO manga = mangaService.update(id, request);
+        return ResponseEntity.ok().body(manga);
     }
 
     @DeleteMapping(value = "/{id}")
