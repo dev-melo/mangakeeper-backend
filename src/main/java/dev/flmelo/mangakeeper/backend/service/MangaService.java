@@ -103,4 +103,14 @@ public class MangaService {
         );
 
     }
+
+    public MangaResponseDTO update(Long id, )
+
+    public void delete(Long id){
+        Optional<Manga> manga = mangaRepository.findById(id);
+        if (manga.isEmpty()){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Mangá não encontrada.");
+        }
+        mangaRepository.deleteById(id);
+    }
 }

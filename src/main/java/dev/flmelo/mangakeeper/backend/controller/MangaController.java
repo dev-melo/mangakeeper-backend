@@ -44,4 +44,10 @@ public class MangaController {
 
         return ResponseEntity.created(uri).body(mangaCriado);
     }
+
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<?> delete(@PathVariable Long id){
+        mangaService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
 }
