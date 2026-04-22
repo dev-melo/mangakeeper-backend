@@ -2,6 +2,7 @@ package dev.flmelo.mangakeeper.backend.service;
 
 import dev.flmelo.mangakeeper.backend.dto.manga.CreateMangaDTO;
 import dev.flmelo.mangakeeper.backend.dto.manga.MangaResponseDTO;
+import dev.flmelo.mangakeeper.backend.dto.manga.UpdateMangaDTO;
 import dev.flmelo.mangakeeper.backend.entity.Colecao;
 import dev.flmelo.mangakeeper.backend.entity.Manga;
 import dev.flmelo.mangakeeper.backend.repository.ColecaoRepository;
@@ -104,7 +105,9 @@ public class MangaService {
 
     }
 
-    public MangaResponseDTO update(Long id, )
+    public MangaResponseDTO update(Long id, UpdateMangaDTO request){
+
+    }
 
     public void delete(Long id){
         Optional<Manga> manga = mangaRepository.findById(id);
