@@ -6,6 +6,7 @@ import dev.flmelo.mangakeeper.backend.dto.colecao.UpdateColecaoDTO;
 import dev.flmelo.mangakeeper.backend.entity.Colecao;
 import dev.flmelo.mangakeeper.backend.entity.Usuario;
 import dev.flmelo.mangakeeper.backend.exceptions.CollectionNotFoundException;
+import dev.flmelo.mangakeeper.backend.exceptions.InvalidCollectionNameException;
 import dev.flmelo.mangakeeper.backend.exceptions.UserNotFoundException;
 import dev.flmelo.mangakeeper.backend.repository.ColecaoRepository;
 import dev.flmelo.mangakeeper.backend.repository.UsuarioRepository;
@@ -101,7 +102,7 @@ public class ColecaoService {
         if (nomeColecao != null && !nomeColecao.trim().isEmpty()){
             c.setNome(nomeColecao.trim());
         } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Nome da coleção inválido");
+            throw new InvalidCollectionNameException();
         }
 
         colecaoRepository.save(c);

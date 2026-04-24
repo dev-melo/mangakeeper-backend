@@ -1,6 +1,7 @@
 package dev.flmelo.mangakeeper.backend.infra;
 
 import dev.flmelo.mangakeeper.backend.exceptions.CollectionNotFoundException;
+import dev.flmelo.mangakeeper.backend.exceptions.InvalidCollectionNameException;
 import dev.flmelo.mangakeeper.backend.exceptions.UserAlreadyExistsException;
 import dev.flmelo.mangakeeper.backend.exceptions.UserNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -23,8 +24,13 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(CollectionNotFoundException.class)
-    private ResponseEntity<String> colletionNotFoundHandler( CollectionNotFoundException exception){
+    private ResponseEntity<String> colletionNotFoundHandler(CollectionNotFoundException exception){
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
+    }
+
+    @ExceptionHandler(InvalidCollectionNameException.class)
+    private ResponseEntity<String> invalidCollectionNameHandler(InvalidCollectionNameException exception){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getMessage());
     }
 
 }
