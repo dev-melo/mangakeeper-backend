@@ -5,6 +5,9 @@ import dev.flmelo.mangakeeper.backend.dto.colecao.CreateColecaoDTO;
 import dev.flmelo.mangakeeper.backend.dto.colecao.UpdateColecaoDTO;
 import dev.flmelo.mangakeeper.backend.entity.Colecao;
 import dev.flmelo.mangakeeper.backend.entity.Usuario;
+import dev.flmelo.mangakeeper.backend.exceptions.CollectionNotFoundException;
+import dev.flmelo.mangakeeper.backend.exceptions.InvalidCollectionNameException;
+import dev.flmelo.mangakeeper.backend.exceptions.UserNotFoundException;
 import dev.flmelo.mangakeeper.backend.repository.ColecaoRepository;
 import dev.flmelo.mangakeeper.backend.repository.UsuarioRepository;
 import org.springframework.http.HttpStatus;
@@ -39,7 +42,7 @@ public class ColecaoService {
     public ColecaoResponseDTO getById(Long id){
         Optional<Colecao> colecaoById = colecaoRepository.findById(id);
         if (colecaoById.isEmpty()){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Coleção não encontrada.");
+            throw new CollectionNotFoundException();
         }
 
         Colecao colecao = colecaoById.get();
@@ -58,7 +61,7 @@ public class ColecaoService {
         Optional<Usuario> usuario = usuarioRepository.findById(request.usuarioId());
 
         if (usuario.isEmpty()){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario não encontrado.");
+            throw new UserNotFoundException();
         }
 
         Usuario u = usuario.get();
@@ -91,15 +94,20 @@ public class ColecaoService {
     public ColecaoResponseDTO updateColecao(Long id, UpdateColecaoDTO updateColecaoDTO){
         Optional<Colecao> colecaoAntiga = colecaoRepository.findById(id);
         if (colecaoAntiga.isEmpty()){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Coleção não encontrada. ID: " + id);
+            throw new CollectionNotFoundException();
         }
 
         String nomeColecao = updateColecaoDTO.nome();
+
         Colecao c = colecaoAntiga.get();
         if (nomeColecao != null && !nomeColecao.trim().isEmpty()){
-            c.setNome(nomeColecao.trim());
+            nomeColecao = nomeColecao.trim();
+            if (nomeColecao.matches("[0-9]+")){
+                throw new InvalidCollectionNameException();
+            }
+            c.setNome(nomeColecao);
         } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Nome da coleção inválido");
+            throw new InvalidCollectionNameException();
         }
 
         colecaoRepository.save(c);
@@ -114,7 +122,7 @@ public class ColecaoService {
     public void delete(Long id){
         Optional<Colecao> colecao = colecaoRepository.findById(id);
         if (colecao.isEmpty()){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Coleção não encontrado. ID: " + id);
+            throw new CollectionNotFoundException();
         }
         colecaoRepository.deleteById(id);
     }
