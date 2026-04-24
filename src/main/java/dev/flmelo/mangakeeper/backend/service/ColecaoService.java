@@ -98,9 +98,14 @@ public class ColecaoService {
         }
 
         String nomeColecao = updateColecaoDTO.nome();
+
         Colecao c = colecaoAntiga.get();
         if (nomeColecao != null && !nomeColecao.trim().isEmpty()){
-            c.setNome(nomeColecao.trim());
+            nomeColecao = nomeColecao.trim();
+            if (nomeColecao.matches("[0-9]+")){
+                throw new InvalidCollectionNameException();
+            }
+            c.setNome(nomeColecao);
         } else {
             throw new InvalidCollectionNameException();
         }
