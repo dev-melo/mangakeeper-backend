@@ -4,6 +4,8 @@ import dev.flmelo.mangakeeper.backend.dto.usuario.CreateUsuarioDTO;
 import dev.flmelo.mangakeeper.backend.dto.usuario.UpdateUsuarioDTO;
 import dev.flmelo.mangakeeper.backend.dto.usuario.UsuarioResponseDTO;
 import dev.flmelo.mangakeeper.backend.entity.Usuario;
+import dev.flmelo.mangakeeper.backend.exceptions.UserAlreadyExistsException;
+import dev.flmelo.mangakeeper.backend.exceptions.UserNotFoundException;
 import dev.flmelo.mangakeeper.backend.repository.UsuarioRepository;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -37,7 +39,7 @@ public class UsuarioService {
         Optional<Usuario> byId = usuarioRepository.findById(id);
         if (byId.isEmpty())
         {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND ,"Usuario não encontrado: ID " + id);
+            throw new UserNotFoundException();
         }
 
         Usuario u = byId.get();
@@ -52,7 +54,7 @@ public class UsuarioService {
             return new UsuarioResponseDTO(usuarioSalvo.getId(), usuarioSalvo.getUsername(), usuarioSalvo.getAvatarUrl());
 
         } catch (DataIntegrityViolationException e){
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Não foi possivel criar o usuário. O username já está sendo usado.");
+            throw new UserAlreadyExistsException();
         }
 
     }
@@ -62,7 +64,7 @@ public class UsuarioService {
 
 
         if (byId.isEmpty()){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND ,"Usuario não encontrado: ID " + id);
+            throw new UserNotFoundException();
         }
         Usuario u = byId.get();
 
@@ -85,7 +87,7 @@ public class UsuarioService {
     public void delete(Long id){
         Optional<Usuario> usuario = usuarioRepository.findById(id);
         if (usuario.isEmpty()){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND ,"Usuario não encontrado: ID " + id);
+            throw new UserNotFoundException();
         }
         usuarioRepository.deleteById(id);
     }
