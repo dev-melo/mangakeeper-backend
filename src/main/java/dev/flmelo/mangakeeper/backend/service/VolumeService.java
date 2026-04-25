@@ -50,4 +50,12 @@ public class VolumeService {
                 v.getImagemUrl()
         );
     }
+
+    public void delete(Long id){
+        Optional<Volume> volumeById = volumeRepository.findById(id);
+        if (volumeById.isEmpty()){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Volume não encontrado.");
+        }
+        volumeRepository.deleteById(id);
+    }
 }

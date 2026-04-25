@@ -3,10 +3,7 @@ package dev.flmelo.mangakeeper.backend.controller;
 import dev.flmelo.mangakeeper.backend.dto.volume.VolumeResponseDTO;
 import dev.flmelo.mangakeeper.backend.service.VolumeService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -30,5 +27,13 @@ public class VolumeController {
     public ResponseEntity<VolumeResponseDTO> getById(@PathVariable Long id){
         VolumeResponseDTO volumeById = volumeService.getById(id);
         return ResponseEntity.ok().body(volumeById);
+    }
+
+
+
+    @DeleteMapping (value = "/{id}")
+    public ResponseEntity<?> delete(@PathVariable Long id){
+        volumeService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }
