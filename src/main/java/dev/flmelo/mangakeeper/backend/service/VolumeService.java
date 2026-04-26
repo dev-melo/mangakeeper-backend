@@ -51,6 +51,8 @@ public class VolumeService {
         );
     }
 
+    public VolumeResponseDTO()
+
     public void delete(Long id){
         Optional<Volume> volumeById = volumeRepository.findById(id);
         if (volumeById.isEmpty()){
