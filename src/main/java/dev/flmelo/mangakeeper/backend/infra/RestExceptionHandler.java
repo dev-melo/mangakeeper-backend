@@ -45,4 +45,10 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(status).body(errorResponse);
     }
 
+    @ExceptionHandler(VolumeNotFoundException.class)
+    private ResponseEntity<RestErrorMessage> volumeNotFoundHandler(VolumeNotFoundException exception){
+        HttpStatus status = HttpStatus.NOT_FOUND;
+        RestErrorMessage errorResponse = new RestErrorMessage(status, exception.getMessage());
+        return ResponseEntity.status(status).body(errorResponse);
+    }
 }
