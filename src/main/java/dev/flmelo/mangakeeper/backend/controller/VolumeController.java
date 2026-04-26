@@ -1,6 +1,7 @@
 package dev.flmelo.mangakeeper.backend.controller;
 
 import dev.flmelo.mangakeeper.backend.dto.volume.CreateVolumeDTO;
+import dev.flmelo.mangakeeper.backend.dto.volume.UpdateVolumeDTO;
 import dev.flmelo.mangakeeper.backend.dto.volume.VolumeResponseDTO;
 import dev.flmelo.mangakeeper.backend.service.VolumeService;
 import jakarta.validation.Valid;
@@ -42,6 +43,12 @@ public class VolumeController {
                 .buildAndExpand(volumeCriado.id())
                 .toUri();
         return ResponseEntity.created(uri).body(volumeCriado);
+    }
+
+    @PatchMapping(value = "/{id}")
+    public ResponseEntity<VolumeResponseDTO> update(@Valid @PathVariable Long id, @RequestBody UpdateVolumeDTO request){
+        VolumeResponseDTO volume = volumeService.update(id, request);
+        return ResponseEntity.ok().body(volume);
     }
 
 

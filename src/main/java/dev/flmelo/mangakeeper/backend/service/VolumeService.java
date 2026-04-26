@@ -85,7 +85,7 @@ public class VolumeService {
         if (volumeById.isEmpty()){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Volume não encontrado.");
         }
-        Volume volumeAtualizado = new Volume();
+        Volume volumeAtualizado = volumeById.get();
         if (request.numero() != null){
             volumeAtualizado.setNumero(request.numero());
         }
