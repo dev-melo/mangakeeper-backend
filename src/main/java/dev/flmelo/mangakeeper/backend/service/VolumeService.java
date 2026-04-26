@@ -1,11 +1,13 @@
 package dev.flmelo.mangakeeper.backend.service;
 
+import dev.flmelo.mangakeeper.backend.dto.volume.CreateVolumeDTO;
 import dev.flmelo.mangakeeper.backend.dto.volume.VolumeResponseDTO;
+import dev.flmelo.mangakeeper.backend.entity.Manga;
 import dev.flmelo.mangakeeper.backend.entity.Volume;
+import dev.flmelo.mangakeeper.backend.exceptions.MangaNotFoundException;
 import dev.flmelo.mangakeeper.backend.repository.MangaRepository;
 import dev.flmelo.mangakeeper.backend.repository.VolumeRepository;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -51,7 +53,36 @@ public class VolumeService {
         );
     }
 
-    public VolumeResponseDTO()
+    public VolumeResponseDTO create(CreateVolumeDTO request){
+        Optional<Manga> manga = mangaRepository.findById(request.mangaId());
+        if (manga.isEmpty()){
+            throw new MangaNotFoundException();
+        }
+        Manga m = manga.get();
+
+        Volume volume = new Volume(
+                request.numero(),
+                clean(request.codigoDeBarras()),
+                clean(request.isbn()),
+                m,
+                clean(request.imagemUrl())
+        );
+
+        Volume volumeSalvo = volumeRepository.save(volume);
+
+        return new VolumeResponseDTO(
+                volumeSalvo.getId(),
+                volume.getNumero(),
+                volumeSalvo.getCodigoDeBarras(),
+                volumeSalvo.getIsbn(),
+                volumeSalvo.getManga().getId(),
+                volumeSalvo.getImagemUrl());
+    }
+
+    private String clean(String s) {
+       return s == null ? null :  s.trim();
+
+    }
 
     public void delete(Long id){
         Optional<Volume> volumeById = volumeRepository.findById(id);

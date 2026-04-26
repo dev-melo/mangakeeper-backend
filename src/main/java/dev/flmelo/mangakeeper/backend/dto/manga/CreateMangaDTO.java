@@ -15,7 +15,8 @@ public record CreateMangaDTO(
         @JsonProperty("total_volumes")
         @NotNull Integer totalVolumes,
         @NotNull Idioma idioma,
-        @NotNull Long colecaoId
+
+        @JsonProperty("colecao_id") @NotNull Long colecaoId
 
         ) {
 }
