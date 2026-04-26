@@ -1,9 +1,6 @@
 package dev.flmelo.mangakeeper.backend.infra;
 
-import dev.flmelo.mangakeeper.backend.exceptions.CollectionNotFoundException;
-import dev.flmelo.mangakeeper.backend.exceptions.InvalidCollectionNameException;
-import dev.flmelo.mangakeeper.backend.exceptions.UserAlreadyExistsException;
-import dev.flmelo.mangakeeper.backend.exceptions.UserNotFoundException;
+import dev.flmelo.mangakeeper.backend.exceptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -14,23 +11,38 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(UserNotFoundException.class)
-    private ResponseEntity<String> userNotFoundHandler(UserNotFoundException exception){
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
+    private ResponseEntity<RestErrorMessage> userNotFoundHandler(UserNotFoundException exception){
+        HttpStatus status = HttpStatus.NOT_FOUND;
+        RestErrorMessage errorResponse = new RestErrorMessage(status, exception.getMessage());
+        return ResponseEntity.status(status).body(errorResponse);
     }
 
     @ExceptionHandler(UserAlreadyExistsException.class)
-    private ResponseEntity<String> userAlreadyExistsHandler(UserAlreadyExistsException exception){
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(exception.getMessage());
+    private ResponseEntity<RestErrorMessage> userAlreadyExistsHandler(UserAlreadyExistsException exception){
+        HttpStatus status = HttpStatus.CONFLICT;
+        RestErrorMessage errorResponse = new RestErrorMessage(status, exception.getMessage());
+        return ResponseEntity.status(status).body(errorResponse);
     }
 
     @ExceptionHandler(CollectionNotFoundException.class)
-    private ResponseEntity<String> colletionNotFoundHandler(CollectionNotFoundException exception){
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
+    private ResponseEntity<RestErrorMessage> colletionNotFoundHandler(CollectionNotFoundException exception){
+        HttpStatus status = HttpStatus.NOT_FOUND;
+        RestErrorMessage errorResponse = new RestErrorMessage(status, exception.getMessage());
+        return ResponseEntity.status(status).body(errorResponse);
     }
 
     @ExceptionHandler(InvalidCollectionNameException.class)
-    private ResponseEntity<String> invalidCollectionNameHandler(InvalidCollectionNameException exception){
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getMessage());
+    private ResponseEntity<RestErrorMessage> invalidCollectionNameHandler(InvalidCollectionNameException exception){
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        RestErrorMessage errorResponse = new RestErrorMessage(status, exception.getMessage());
+        return ResponseEntity.status(status).body(errorResponse);
+    }
+
+    @ExceptionHandler(MangaNotFoundException.class)
+    private ResponseEntity<RestErrorMessage> mangaNotFoundHandler(MangaNotFoundException exception){
+        HttpStatus status = HttpStatus.NOT_FOUND;
+        RestErrorMessage errorResponse = new RestErrorMessage(status, exception.getMessage());
+        return ResponseEntity.status(status).body(errorResponse);
     }
 
 }

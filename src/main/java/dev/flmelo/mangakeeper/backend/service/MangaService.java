@@ -5,6 +5,8 @@ import dev.flmelo.mangakeeper.backend.dto.manga.MangaResponseDTO;
 import dev.flmelo.mangakeeper.backend.dto.manga.UpdateMangaDTO;
 import dev.flmelo.mangakeeper.backend.entity.Colecao;
 import dev.flmelo.mangakeeper.backend.entity.Manga;
+import dev.flmelo.mangakeeper.backend.exceptions.CollectionNotFoundException;
+import dev.flmelo.mangakeeper.backend.exceptions.MangaNotFoundException;
 import dev.flmelo.mangakeeper.backend.repository.ColecaoRepository;
 import dev.flmelo.mangakeeper.backend.repository.MangaRepository;
 import org.springframework.http.HttpStatus;
@@ -45,7 +47,7 @@ public class MangaService {
     public MangaResponseDTO getById(Long id){
         Optional<Manga> mangaById = mangaRepository.findById(id);
         if (mangaById.isEmpty()){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Mangá não encontrado.");
+            throw new MangaNotFoundException();
         }
         Manga manga = mangaById.get();
         return new MangaResponseDTO(
@@ -65,7 +67,7 @@ public class MangaService {
     public MangaResponseDTO create(CreateMangaDTO request){
         Optional<Colecao> colecao = colecaoRepository.findById(request.colecaoId());
         if (colecao.isEmpty()){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Coleção não encontrada.");
+            throw new CollectionNotFoundException();
         }
         Colecao c = colecao.get();
 
@@ -108,7 +110,7 @@ public class MangaService {
     public MangaResponseDTO update(Long id, UpdateMangaDTO request){
         Optional<Manga> mangaById = mangaRepository.findById(id);
         if (mangaById.isEmpty()){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Mangá não encontrada.");
+            throw new MangaNotFoundException();
         }
         Manga m = mangaById.get();
 
@@ -167,7 +169,7 @@ public class MangaService {
     public void delete(Long id){
         Optional<Manga> manga = mangaRepository.findById(id);
         if (manga.isEmpty()){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Mangá não encontrada.");
+            throw new MangaNotFoundException();
         }
         mangaRepository.deleteById(id);
     }
