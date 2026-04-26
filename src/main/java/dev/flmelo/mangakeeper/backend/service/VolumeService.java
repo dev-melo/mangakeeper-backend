@@ -1,6 +1,7 @@
 package dev.flmelo.mangakeeper.backend.service;
 
 import dev.flmelo.mangakeeper.backend.dto.volume.CreateVolumeDTO;
+import dev.flmelo.mangakeeper.backend.dto.volume.UpdateVolumeDTO;
 import dev.flmelo.mangakeeper.backend.dto.volume.VolumeResponseDTO;
 import dev.flmelo.mangakeeper.backend.entity.Manga;
 import dev.flmelo.mangakeeper.backend.entity.Volume;
@@ -79,8 +80,37 @@ public class VolumeService {
                 volumeSalvo.getImagemUrl());
     }
 
-    private String clean(String s) {
-       return s == null ? null :  s.trim();
+    public VolumeResponseDTO update(Long id, UpdateVolumeDTO request){
+        Optional<Volume> volumeById = volumeRepository.findById(id);
+        if (volumeById.isEmpty()){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Volume não encontrado.");
+        }
+        Volume volumeAtualizado = new Volume();
+        if (request.numero() != null){
+            volumeAtualizado.setNumero(request.numero());
+        }
+        if (request.codigoDeBarras() != null){
+            String cdb = request.codigoDeBarras().trim();
+            volumeAtualizado.setCodigoDeBarras(cdb);
+        }
+        if (request.isbn() != null){
+            String isbn = request.isbn().trim();
+            volumeAtualizado.setIsbn(isbn);
+        }
+        if (request.imagemUrl() != null) {
+            String imgUrl = request.imagemUrl().trim();
+            volumeAtualizado.setImagemUrl(imgUrl);
+        }
+        Volume v = volumeRepository.save(volumeAtualizado);
+
+        return new VolumeResponseDTO(
+                v.getId(),
+                v.getNumero(),
+                v.getCodigoDeBarras(),
+                v.getIsbn(),
+                v.getManga().getId(),
+                v.getImagemUrl()
+        );
 
     }
 
@@ -90,5 +120,10 @@ public class VolumeService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Volume não encontrado.");
         }
         volumeRepository.deleteById(id);
+    }
+
+    private String clean(String s) {
+        return s == null ? null :  s.trim();
+
     }
 }
