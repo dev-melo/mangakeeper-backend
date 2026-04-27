@@ -1,6 +1,7 @@
 package dev.flmelo.mangakeeper.backend.service;
 
-import dev.flmelo.mangakeeper.backend.dto.curtida.CurtidaResponseDTO;
+import dev.flmelo.mangakeeper.backend.dto.curtida.ColecaoCurtidaResponseDTO;
+import dev.flmelo.mangakeeper.backend.dto.curtida.UsuarioCurtidaResponseDTO;
 import dev.flmelo.mangakeeper.backend.entity.Colecao;
 import dev.flmelo.mangakeeper.backend.entity.Curtida;
 import dev.flmelo.mangakeeper.backend.entity.Usuario;
@@ -15,9 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import java.util.AbstractMap.SimpleEntry;
 
-import java.util.AbstractMap;
-import java.util.Optional;
-
 @Service
 public class CurtidaService {
     private final CurtidaRepository curtidaRepository;
@@ -30,6 +28,7 @@ public class CurtidaService {
         this.usuarioRepository = usuarioRepository;
     }
 
+    //Coleções
     public void curtirColecao(Long usuarioId, Long colecaoId) {
         SimpleEntry<Usuario, Colecao> res = validarUsuarioEColecaoExistentes(usuarioId, colecaoId);
         if (curtidaRepository.existsByUsuarioIdAndColecaoId(usuarioId, colecaoId)) {
@@ -49,14 +48,24 @@ public class CurtidaService {
         }
     }
 
-    public CurtidaResponseDTO totalCurtidasColecao(Long colecaoId){
+    public ColecaoCurtidaResponseDTO totalCurtidasColecao(Long colecaoId){
         Colecao colecao = colecaoRepository.findById(colecaoId).orElseThrow(CollectionNotFoundException::new);
         Integer qtdCurtidas = curtidaRepository.countByColecaoId(colecaoId);
-        return new CurtidaResponseDTO(
+        return new ColecaoCurtidaResponseDTO(
                 colecao.getId(),
                 qtdCurtidas
         );
 
+    }
+
+    //Usuarios
+    public UsuarioCurtidaResponseDTO totalCurtidasUsuario(Long usuarioId){
+        Usuario usuario = usuarioRepository.findById(usuarioId).orElseThrow(UserNotFoundException::new);
+        Integer qtdCurtidas = curtidaRepository.countByUsuarioId(usuarioId);
+        return new UsuarioCurtidaResponseDTO(
+                usuario.getId(),
+                qtdCurtidas
+        );
     }
 
     private SimpleEntry<Usuario, Colecao> validarUsuarioEColecaoExistentes(Long usuarioId, Long colecaoId) {

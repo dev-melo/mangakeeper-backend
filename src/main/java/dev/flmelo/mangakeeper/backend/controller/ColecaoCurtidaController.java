@@ -1,6 +1,6 @@
 package dev.flmelo.mangakeeper.backend.controller;
 
-import dev.flmelo.mangakeeper.backend.dto.curtida.CurtidaResponseDTO;
+import dev.flmelo.mangakeeper.backend.dto.curtida.ColecaoCurtidaResponseDTO;
 import dev.flmelo.mangakeeper.backend.service.CurtidaService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -29,8 +29,8 @@ public class ColecaoCurtidaController {
     }
 
     @GetMapping("/{colecaoId}/likes")
-    public ResponseEntity<CurtidaResponseDTO> curtidasColecao(@PathVariable Long colecaoId){
-        CurtidaResponseDTO curtidaDTO = curtidaService.totalCurtidasColecao(colecaoId);
+    public ResponseEntity<ColecaoCurtidaResponseDTO> curtidasColecao(@PathVariable Long colecaoId){
+        ColecaoCurtidaResponseDTO curtidaDTO = curtidaService.totalCurtidasColecao(colecaoId);
         return ResponseEntity.ok().body(curtidaDTO);
     }
 
