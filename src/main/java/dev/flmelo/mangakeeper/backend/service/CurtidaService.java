@@ -10,6 +10,7 @@ import dev.flmelo.mangakeeper.backend.repository.CurtidaRepository;
 import dev.flmelo.mangakeeper.backend.repository.UsuarioRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import java.util.AbstractMap.SimpleEntry;
 
@@ -39,10 +40,11 @@ public class CurtidaService {
         curtidaRepository.save(curtida);
     }
 
-    public void removeCurtida(Long usuarioId, Long colecaoId){
+    @Transactional
+    public void removeCurtida(Long colecaoId, Long usuarioId){
         SimpleEntry<Usuario, Colecao> res = validarUsuarioEColecaoExistentes(usuarioId, colecaoId);
         if (curtidaRepository.existsByUsuarioIdAndColecaoId(usuarioId, colecaoId)){
-            curtidaRepository.deleteByUsuarioIdAndColecaoId(usuarioId,usuarioId);
+            curtidaRepository.deleteByUsuarioIdAndColecaoId(usuarioId, colecaoId);
         }
     }
 

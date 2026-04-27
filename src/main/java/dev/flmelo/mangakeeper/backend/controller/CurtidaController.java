@@ -21,4 +21,10 @@ public class CurtidaController {
         return ResponseEntity.noContent().build();
     }
 
+    @DeleteMapping("/{colecaoId}/likes")
+    public ResponseEntity<?> removeCurtida(@PathVariable Long colecaoId, @RequestParam Long usuarioId){
+        curtidaService.removeCurtida(colecaoId, usuarioId);
+        return ResponseEntity.noContent().build();
+    }
+
 }
