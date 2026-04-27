@@ -1,5 +1,6 @@
 package dev.flmelo.mangakeeper.backend.service;
 
+import dev.flmelo.mangakeeper.backend.dto.curtida.CurtidaResponseDTO;
 import dev.flmelo.mangakeeper.backend.entity.Colecao;
 import dev.flmelo.mangakeeper.backend.entity.Curtida;
 import dev.flmelo.mangakeeper.backend.entity.Usuario;
@@ -46,6 +47,16 @@ public class CurtidaService {
         if (curtidaRepository.existsByUsuarioIdAndColecaoId(usuarioId, colecaoId)){
             curtidaRepository.deleteByUsuarioIdAndColecaoId(usuarioId, colecaoId);
         }
+    }
+
+    public CurtidaResponseDTO totalCurtidasColecao(Long colecaoId){
+        Colecao colecao = colecaoRepository.findById(colecaoId).orElseThrow(CollectionNotFoundException::new);
+        Integer qtdCurtidas = curtidaRepository.countByColecaoId(colecaoId);
+        return new CurtidaResponseDTO(
+                colecao.getId(),
+                qtdCurtidas
+        );
+
     }
 
     private SimpleEntry<Usuario, Colecao> validarUsuarioEColecaoExistentes(Long usuarioId, Long colecaoId) {
