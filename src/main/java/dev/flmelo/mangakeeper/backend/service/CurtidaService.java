@@ -39,6 +39,13 @@ public class CurtidaService {
         curtidaRepository.save(curtida);
     }
 
+    public void removeCurtida(Long usuarioId, Long colecaoId){
+        SimpleEntry<Usuario, Colecao> res = validarUsuarioEColecaoExistentes(usuarioId, colecaoId);
+        if (curtidaRepository.existsByUsuarioIdAndColecaoId(usuarioId, colecaoId)){
+            curtidaRepository.deleteByUsuarioIdAndColecaoId(usuarioId,usuarioId);
+        }
+    }
+
     private SimpleEntry<Usuario, Colecao> validarUsuarioEColecaoExistentes(Long usuarioId, Long colecaoId) {
         Usuario usuario = usuarioRepository.findById(usuarioId).orElseThrow(
                 UserNotFoundException::new
