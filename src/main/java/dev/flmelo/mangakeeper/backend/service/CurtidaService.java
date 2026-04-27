@@ -1,7 +1,9 @@
 package dev.flmelo.mangakeeper.backend.service;
 
+import dev.flmelo.mangakeeper.backend.dto.colecao.ColecaoResumeDTO;
 import dev.flmelo.mangakeeper.backend.dto.curtida.ColecaoCurtidaResponseDTO;
 import dev.flmelo.mangakeeper.backend.dto.curtida.UsuarioCurtidaResponseDTO;
+import dev.flmelo.mangakeeper.backend.dto.usuario.UsuarioResumeDTO;
 import dev.flmelo.mangakeeper.backend.entity.Colecao;
 import dev.flmelo.mangakeeper.backend.entity.Curtida;
 import dev.flmelo.mangakeeper.backend.entity.Usuario;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import java.util.AbstractMap.SimpleEntry;
+import java.util.List;
 
 @Service
 public class CurtidaService {
@@ -51,9 +54,16 @@ public class CurtidaService {
     public ColecaoCurtidaResponseDTO totalCurtidasColecao(Long colecaoId){
         Colecao colecao = colecaoRepository.findById(colecaoId).orElseThrow(CollectionNotFoundException::new);
         Integer qtdCurtidas = curtidaRepository.countByColecaoId(colecaoId);
+        List<UsuarioResumeDTO> usuarioDTO = curtidaRepository
+                .findAllByColecaoId(colecaoId)
+                .stream()
+                .map(curtida -> {Usuario u = curtida.getUsuario();
+                return new UsuarioResumeDTO(u.getId(), u.getUsername());})
+                .toList();
         return new ColecaoCurtidaResponseDTO(
                 colecao.getId(),
-                qtdCurtidas
+                qtdCurtidas,
+                usuarioDTO
         );
 
     }
@@ -62,9 +72,17 @@ public class CurtidaService {
     public UsuarioCurtidaResponseDTO totalCurtidasUsuario(Long usuarioId){
         Usuario usuario = usuarioRepository.findById(usuarioId).orElseThrow(UserNotFoundException::new);
         Integer qtdCurtidas = curtidaRepository.countByUsuarioId(usuarioId);
+        List<Colecao> listColecoes = colecaoRepository.findAllByUsuarioId(usuarioId);
+        List<ColecaoResumeDTO> colecaoDTO = listColecoes
+                .stream()
+                .map(colecao -> new ColecaoResumeDTO(
+                        colecao.getId(),
+                        colecao.getNome()))
+                .toList();
         return new UsuarioCurtidaResponseDTO(
                 usuario.getId(),
-                qtdCurtidas
+                qtdCurtidas,
+                colecaoDTO
         );
     }
 
