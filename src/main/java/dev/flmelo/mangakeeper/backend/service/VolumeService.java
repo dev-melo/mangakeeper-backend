@@ -6,6 +6,7 @@ import dev.flmelo.mangakeeper.backend.dto.volume.VolumeResponseDTO;
 import dev.flmelo.mangakeeper.backend.entity.Manga;
 import dev.flmelo.mangakeeper.backend.entity.Volume;
 import dev.flmelo.mangakeeper.backend.exceptions.MangaNotFoundException;
+import dev.flmelo.mangakeeper.backend.exceptions.VolumeNotFoundException;
 import dev.flmelo.mangakeeper.backend.repository.MangaRepository;
 import dev.flmelo.mangakeeper.backend.repository.VolumeRepository;
 import org.springframework.http.HttpStatus;
@@ -41,7 +42,7 @@ public class VolumeService {
     public VolumeResponseDTO getById(Long id){
         Optional<Volume> volumeById = volumeRepository.findById(id);
         if (volumeById.isEmpty()){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Volume não encontrado.");
+            throw new VolumeNotFoundException();
         }
         Volume v = volumeById.get();
         return new VolumeResponseDTO(
@@ -83,7 +84,7 @@ public class VolumeService {
     public VolumeResponseDTO update(Long id, UpdateVolumeDTO request){
         Optional<Volume> volumeById = volumeRepository.findById(id);
         if (volumeById.isEmpty()){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Volume não encontrado.");
+            throw new VolumeNotFoundException();
         }
         Volume volumeAtualizado = volumeById.get();
         if (request.numero() != null){
@@ -117,7 +118,7 @@ public class VolumeService {
     public void delete(Long id){
         Optional<Volume> volumeById = volumeRepository.findById(id);
         if (volumeById.isEmpty()){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Volume não encontrado.");
+            throw new VolumeNotFoundException();
         }
         volumeRepository.deleteById(id);
     }

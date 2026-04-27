@@ -46,7 +46,7 @@ public class Curtida {
     }
 
     public Curtida(Usuario usuario, Colecao colecao) {
-
+        this.dataCurtida = LocalDateTime.now();
         this.usuario = usuario;
         this.colecao = colecao;
     }
