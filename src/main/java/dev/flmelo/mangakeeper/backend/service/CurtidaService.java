@@ -11,7 +11,9 @@ import dev.flmelo.mangakeeper.backend.repository.UsuarioRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import java.util.AbstractMap.SimpleEntry;
 
+import java.util.AbstractMap;
 import java.util.Optional;
 
 @Service
@@ -26,7 +28,18 @@ public class CurtidaService {
         this.usuarioRepository = usuarioRepository;
     }
 
-    public void curtirColecao(Long usuarioId, Long colecaoId){
+    public void curtirColecao(Long usuarioId, Long colecaoId) {
+        SimpleEntry<Usuario, Colecao> res = validarUsuarioEColecaoExistentes(usuarioId, colecaoId);
+        if (curtidaRepository.existsByUsuarioIdAndColecaoId(usuarioId, colecaoId)) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Este usuario já curtiu essa coleção.");
+        }
+        Usuario usuario = res.getKey();
+        Colecao colecao = res.getValue();
+        Curtida curtida = new Curtida(usuario, colecao);
+        curtidaRepository.save(curtida);
+    }
+
+    private SimpleEntry<Usuario, Colecao> validarUsuarioEColecaoExistentes(Long usuarioId, Long colecaoId) {
         Usuario usuario = usuarioRepository.findById(usuarioId).orElseThrow(
                 UserNotFoundException::new
         );
@@ -34,15 +47,6 @@ public class CurtidaService {
         Colecao colecao = colecaoRepository.findById(colecaoId).orElseThrow(
                 CollectionNotFoundException::new
         );
-
-        Boolean curtidaExiste = curtidaRepository.existsByUsuarioIdAndColecaoId(usuarioId, colecaoId);
-
-        if (curtidaExiste){
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Este usuario já curtiu essa coleção.");
-        } else {
-            Curtida curtida = new Curtida(usuario, colecao);
-            curtidaRepository.save(curtida);
-        }
-
+        return new SimpleEntry<>(usuario, colecao);
     }
 }
