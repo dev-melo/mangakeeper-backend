@@ -8,4 +8,5 @@ import org.springframework.stereotype.Repository;
 public interface CurtidaRepository extends JpaRepository<Curtida, Long> {
 
     boolean existsByUsuarioIdAndColecaoId(Long usuarioId, Long colecaoId);
+    void deleteByUsuarioIdAndColecaoId(Long usuarioId, Long colecaoId);
 }
