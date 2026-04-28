@@ -51,7 +51,6 @@ public class UsuarioController {
     @Operation(summary = "Cria um usuário", description = "Criar um usuário no sistema.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Usuário criado com sucesso"),
-            @ApiResponse(responseCode = "404", description = "Usuário informado não foi encontrado."),
             @ApiResponse(responseCode = "400", description = "Dados inválidos")
     })
     @PostMapping
