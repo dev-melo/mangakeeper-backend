@@ -8,6 +8,7 @@ import dev.flmelo.mangakeeper.backend.entity.Colecao;
 import dev.flmelo.mangakeeper.backend.entity.Curtida;
 import dev.flmelo.mangakeeper.backend.entity.Usuario;
 import dev.flmelo.mangakeeper.backend.exceptions.CollectionNotFoundException;
+import dev.flmelo.mangakeeper.backend.exceptions.LikeAlreadyExistsException;
 import dev.flmelo.mangakeeper.backend.exceptions.UserNotFoundException;
 import dev.flmelo.mangakeeper.backend.repository.ColecaoRepository;
 import dev.flmelo.mangakeeper.backend.repository.CurtidaRepository;
@@ -35,7 +36,7 @@ public class CurtidaService {
     public void curtirColecao(Long usuarioId, Long colecaoId) {
         SimpleEntry<Usuario, Colecao> res = validarUsuarioEColecaoExistentes(usuarioId, colecaoId);
         if (curtidaRepository.existsByUsuarioIdAndColecaoId(usuarioId, colecaoId)) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Este usuario já curtiu essa coleção.");
+            throw new LikeAlreadyExistsException();
         }
         Usuario usuario = res.getKey();
         Colecao colecao = res.getValue();

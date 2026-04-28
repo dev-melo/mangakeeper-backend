@@ -13,42 +13,56 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(UserNotFoundException.class)
     private ResponseEntity<RestErrorMessage> userNotFoundHandler(UserNotFoundException exception){
         HttpStatus status = HttpStatus.NOT_FOUND;
-        RestErrorMessage errorResponse = new RestErrorMessage(status, exception.getMessage());
+        Integer statusCode = status.value();
+        RestErrorMessage errorResponse = new RestErrorMessage(status,statusCode, exception.getMessage());
         return ResponseEntity.status(status).body(errorResponse);
     }
 
     @ExceptionHandler(UserAlreadyExistsException.class)
     private ResponseEntity<RestErrorMessage> userAlreadyExistsHandler(UserAlreadyExistsException exception){
         HttpStatus status = HttpStatus.CONFLICT;
-        RestErrorMessage errorResponse = new RestErrorMessage(status, exception.getMessage());
+        Integer statusCode = status.value();
+        RestErrorMessage errorResponse = new RestErrorMessage(status,statusCode, exception.getMessage());
         return ResponseEntity.status(status).body(errorResponse);
     }
 
     @ExceptionHandler(CollectionNotFoundException.class)
     private ResponseEntity<RestErrorMessage> colletionNotFoundHandler(CollectionNotFoundException exception){
         HttpStatus status = HttpStatus.NOT_FOUND;
-        RestErrorMessage errorResponse = new RestErrorMessage(status, exception.getMessage());
+        Integer statusCode = status.value();
+        RestErrorMessage errorResponse = new RestErrorMessage(status,statusCode, exception.getMessage());
         return ResponseEntity.status(status).body(errorResponse);
     }
 
     @ExceptionHandler(InvalidCollectionNameException.class)
     private ResponseEntity<RestErrorMessage> invalidCollectionNameHandler(InvalidCollectionNameException exception){
         HttpStatus status = HttpStatus.BAD_REQUEST;
-        RestErrorMessage errorResponse = new RestErrorMessage(status, exception.getMessage());
+        Integer statusCode = status.value();
+        RestErrorMessage errorResponse = new RestErrorMessage(status,statusCode, exception.getMessage());
         return ResponseEntity.status(status).body(errorResponse);
     }
 
     @ExceptionHandler(MangaNotFoundException.class)
     private ResponseEntity<RestErrorMessage> mangaNotFoundHandler(MangaNotFoundException exception){
         HttpStatus status = HttpStatus.NOT_FOUND;
-        RestErrorMessage errorResponse = new RestErrorMessage(status, exception.getMessage());
+        Integer statusCode = status.value();
+        RestErrorMessage errorResponse = new RestErrorMessage(status,statusCode, exception.getMessage());
         return ResponseEntity.status(status).body(errorResponse);
     }
 
     @ExceptionHandler(VolumeNotFoundException.class)
     private ResponseEntity<RestErrorMessage> volumeNotFoundHandler(VolumeNotFoundException exception){
         HttpStatus status = HttpStatus.NOT_FOUND;
-        RestErrorMessage errorResponse = new RestErrorMessage(status, exception.getMessage());
+        Integer statusCode = status.value();
+        RestErrorMessage errorResponse = new RestErrorMessage(status,statusCode, exception.getMessage());
+        return ResponseEntity.status(status).body(errorResponse);
+    }
+
+    @ExceptionHandler(LikeAlreadyExistsException.class)
+    private ResponseEntity<RestErrorMessage> likeAlreadyExistsException(LikeAlreadyExistsException exception){
+        HttpStatus status = HttpStatus.CONFLICT;
+        Integer statusCode = status.value();
+        RestErrorMessage errorResponse = new RestErrorMessage(status,statusCode, exception.getMessage());
         return ResponseEntity.status(status).body(errorResponse);
     }
 }
