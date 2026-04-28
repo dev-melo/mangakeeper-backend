@@ -48,7 +48,7 @@ public class ColecaoController {
         return ResponseEntity.ok().body(colecao);
     }
 
-    @Operation(summary = "Cria uma coleção", description = "")
+    @Operation(summary = "Cria uma coleção", description = "Criar uma coleção no sistema.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Coleção criada com sucesso"),
             @ApiResponse(responseCode = "404", description = "Usuario informado não foi encontrado."),
