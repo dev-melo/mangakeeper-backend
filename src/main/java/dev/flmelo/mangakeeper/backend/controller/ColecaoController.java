@@ -48,7 +48,7 @@ public class ColecaoController {
         return ResponseEntity.ok().body(colecao);
     }
 
-    @Operation(summary = "Cria uma coleção", description = "Criar uma coleção no sistema.")
+    @Operation(summary = "Criar coleção", description = "Criar uma coleção no sistema.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Coleção criada com sucesso"),
             @ApiResponse(responseCode = "404", description = "Usuario informado não foi encontrado."),
@@ -62,7 +62,7 @@ public class ColecaoController {
         return ResponseEntity.created(uri).body(colecaoCriada);
 
     }
-    @Operation(summary = "Atualiza coleção", description = "Atualiza o nome da coleção")
+    @Operation(summary = "Atualizar coleção", description = "Atualiza o nome da coleção")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Nome da coleção atualizado com sucesso"),
             @ApiResponse(responseCode = "404", description = "Coleção não encontrada"),
@@ -74,7 +74,7 @@ public class ColecaoController {
         return ResponseEntity.ok().body(colecao);
     }
 
-    @Operation(summary = "Deleta uma coleção", description = "Remove coleção do sistema por ID")
+    @Operation(summary = "Deletar coleção", description = "Remove coleção do sistema por ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Coleção deletada com sucesso"),
             @ApiResponse(responseCode = "404", description = "Coleção não encontrada")

@@ -49,7 +49,7 @@ public class MangaController {
         return ResponseEntity.ok().body(manga);
     }
 
-    @Operation(summary = "Cria um mangá", description = "Criar um mangá no sistema.")
+    @Operation(summary = "Criar mangá", description = "Criar um mangá no sistema.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Mangá criado com sucesso"),
             @ApiResponse(responseCode = "404", description = "Coleção informada não foi encontrada."),
@@ -67,7 +67,7 @@ public class MangaController {
         return ResponseEntity.created(uri).body(mangaCriado);
     }
 
-    @Operation(summary = "Atualiza mangá", description = "Atualiza dados de um mangá")
+    @Operation(summary = "Atualizar mangá", description = "Atualiza dados de um mangá")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Dados atualizados com sucesso"),
             @ApiResponse(responseCode = "404", description = "Mangá não encontrado"),
@@ -79,7 +79,7 @@ public class MangaController {
         return ResponseEntity.ok().body(manga);
     }
 
-    @Operation(summary = "Deleta um mangá", description = "Remove mangá do sistema por ID")
+    @Operation(summary = "Deletar mangá", description = "Remove mangá do sistema por ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Mangá deletado com sucesso"),
             @ApiResponse(responseCode = "404", description = "Mangá não encontrado")

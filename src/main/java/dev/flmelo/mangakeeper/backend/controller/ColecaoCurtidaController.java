@@ -33,7 +33,7 @@ public class ColecaoCurtidaController {
         return ResponseEntity.noContent().build();
     }
 
-    @Operation(summary = "Remove curtida", description = "Remove a curtida de uma coleção")
+    @Operation(summary = "Remover curtida", description = "Remove a curtida de uma coleção")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Curtida removida com sucesso"),
             @ApiResponse(responseCode = "404", description = "Coleção ou usuário não encontrado.")

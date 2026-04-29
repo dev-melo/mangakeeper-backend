@@ -48,7 +48,7 @@ public class UsuarioController {
         return ResponseEntity.ok().body(usuario);
     }
 
-    @Operation(summary = "Cria um usuário", description = "Criar um usuário no sistema.")
+    @Operation(summary = "Criar usuário", description = "Criar um usuário no sistema.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Usuário criado com sucesso"),
             @ApiResponse(responseCode = "400", description = "Dados inválidos")
@@ -65,7 +65,7 @@ public class UsuarioController {
         return ResponseEntity.created(uri).body(usuarioSalvo);
     }
 
-    @Operation(summary = "Atualiza usuário", description = "Atualiza dados do usuário")
+    @Operation(summary = "Atualizar usuário", description = "Atualiza dados do usuário")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Dados do usuário atualizado com sucesso"),
             @ApiResponse(responseCode = "404", description = "Usuário não encontrado"),
@@ -78,7 +78,7 @@ public class UsuarioController {
         return ResponseEntity.ok().body(usuarioAtualizado);
     }
 
-    @Operation(summary = "Deleta um usuário", description = "Remove usuário do sistema por ID")
+    @Operation(summary = "Deletar usuário", description = "Remove usuário do sistema por ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Usuário deletado com sucesso"),
             @ApiResponse(responseCode = "404", description = "Usuário não encontrado")
