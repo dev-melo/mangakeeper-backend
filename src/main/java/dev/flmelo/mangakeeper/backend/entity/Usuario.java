@@ -28,7 +28,6 @@ public class Usuario implements UserDetails {
     private String email;
 
     @NotBlank
-    @Size(min = 8, max = 20, message = "A senha precisa ter entre 8 a 20 caracteres.")
     @Column(nullable = false)
     private String password;
 
