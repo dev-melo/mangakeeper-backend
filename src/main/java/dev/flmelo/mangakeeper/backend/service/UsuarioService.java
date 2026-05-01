@@ -9,6 +9,8 @@ import dev.flmelo.mangakeeper.backend.exceptions.UserNotFoundException;
 import dev.flmelo.mangakeeper.backend.repository.UsuarioRepository;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -19,9 +21,11 @@ import java.util.Optional;
 public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
+    public final PasswordEncoder passwordEncoder;
 
-    public UsuarioService(UsuarioRepository usuarioRepository) {
+    public UsuarioService(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder) {
         this.usuarioRepository = usuarioRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public List<UsuarioResponseDTO> getAll() {
@@ -48,7 +52,8 @@ public class UsuarioService {
     }
 
     public UsuarioResponseDTO create(CreateUsuarioDTO request) {
-        Usuario u = new Usuario(request.username(), request.email(), request.password(), request.avatarUrl());
+        String senhaCriptografada = passwordEncoder.encode(request.password());
+        Usuario u = new Usuario(request.username(), request.email(), senhaCriptografada, request.avatarUrl());
         try {
             Usuario usuarioSalvo = usuarioRepository.save(u);
             return new UsuarioResponseDTO(usuarioSalvo.getId(), usuarioSalvo.getUsername(), usuarioSalvo.getAvatarUrl());
