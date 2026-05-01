@@ -1,4 +1,28 @@
 package dev.flmelo.mangakeeper.backend.config.security;
 
-public class UsuarioDetailsService {
+import dev.flmelo.mangakeeper.backend.entity.Usuario;
+import dev.flmelo.mangakeeper.backend.exceptions.UserNotFoundException;
+import dev.flmelo.mangakeeper.backend.repository.UsuarioRepository;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+
+import java.util.Optional;
+
+@Service
+public class UsuarioDetailsService implements UserDetailsService {
+
+    private final UsuarioRepository usuarioRepository;
+
+    public UsuarioDetailsService(UsuarioRepository usuarioRepository) {
+        this.usuarioRepository = usuarioRepository;
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Usuario usuario = usuarioRepository.findByUsername(username).orElseThrow(UserNotFoundException::new);
+
+        return usuario;
+    }
 }
