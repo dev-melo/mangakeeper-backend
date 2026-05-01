@@ -33,6 +33,12 @@ public class Usuario implements UserDetails {
 
     private String avatarUrl;
 
+    @ManyToMany
+    @JoinTable(name = "usuarios_funcoes",
+            joinColumns = @JoinColumn(name = "usuario_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private List<RoleModel> roles;
+
     public Usuario() {
     }
 
@@ -93,7 +99,7 @@ public class Usuario implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(()->"ROLE_ADMIN");
+        return this.roles;
     }
 
     public String getPassword() {
