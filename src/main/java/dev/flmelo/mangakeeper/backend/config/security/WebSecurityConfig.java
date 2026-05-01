@@ -31,6 +31,7 @@ public class WebSecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
+    /*
     @Bean
     public UserDetailsService userDetailsService(){
         UserDetails user = User
@@ -40,4 +41,5 @@ public class WebSecurityConfig {
                 .build();
         return new InMemoryUserDetailsManager(user);
     }
+    */
 }
