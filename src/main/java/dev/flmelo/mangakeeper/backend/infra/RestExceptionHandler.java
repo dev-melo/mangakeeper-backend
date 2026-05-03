@@ -3,6 +3,7 @@ package dev.flmelo.mangakeeper.backend.infra;
 import dev.flmelo.mangakeeper.backend.exceptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
@@ -61,6 +62,14 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(LikeAlreadyExistsException.class)
     private ResponseEntity<RestErrorMessage> likeAlreadyExistsException(LikeAlreadyExistsException exception){
         HttpStatus status = HttpStatus.CONFLICT;
+        Integer statusCode = status.value();
+        RestErrorMessage errorResponse = new RestErrorMessage(status,statusCode, exception.getMessage());
+        return ResponseEntity.status(status).body(errorResponse);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    private ResponseEntity<RestErrorMessage> accessDeniedHandler(AccessDeniedException exception){
+        HttpStatus status = HttpStatus.FORBIDDEN;
         Integer statusCode = status.value();
         RestErrorMessage errorResponse = new RestErrorMessage(status,statusCode, exception.getMessage());
         return ResponseEntity.status(status).body(errorResponse);
