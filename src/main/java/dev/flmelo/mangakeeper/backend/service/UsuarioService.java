@@ -1,5 +1,6 @@
 package dev.flmelo.mangakeeper.backend.service;
 
+import dev.flmelo.mangakeeper.backend.config.security.AuthService;
 import dev.flmelo.mangakeeper.backend.dto.usuario.CreateUsuarioDTO;
 import dev.flmelo.mangakeeper.backend.dto.usuario.UpdateUsuarioDTO;
 import dev.flmelo.mangakeeper.backend.dto.usuario.UsuarioResponseDTO;
@@ -9,7 +10,10 @@ import dev.flmelo.mangakeeper.backend.exceptions.UserNotFoundException;
 import dev.flmelo.mangakeeper.backend.repository.UsuarioRepository;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -18,10 +22,14 @@ import java.util.Optional;
 @Service
 public class UsuarioService {
 
+    private final AuthService authService;
     private final UsuarioRepository usuarioRepository;
+    public final PasswordEncoder passwordEncoder;
 
-    public UsuarioService(UsuarioRepository usuarioRepository) {
+    public UsuarioService(AuthService authService, UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder) {
+        this.authService = authService;
         this.usuarioRepository = usuarioRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public List<UsuarioResponseDTO> getAll() {
@@ -48,7 +56,8 @@ public class UsuarioService {
     }
 
     public UsuarioResponseDTO create(CreateUsuarioDTO request) {
-        Usuario u = new Usuario(request.username(), request.email(), request.password(), request.avatarUrl());
+        String senhaCriptografada = passwordEncoder.encode(request.password());
+        Usuario u = new Usuario(request.username(), request.email(), senhaCriptografada, request.avatarUrl());
         try {
             Usuario usuarioSalvo = usuarioRepository.save(u);
             return new UsuarioResponseDTO(usuarioSalvo.getId(), usuarioSalvo.getUsername(), usuarioSalvo.getAvatarUrl());
@@ -61,12 +70,12 @@ public class UsuarioService {
 
     public UsuarioResponseDTO updateUsuario(Long id, UpdateUsuarioDTO usuarioUpdate) {
         Optional<Usuario> byId = usuarioRepository.findById(id);
-
-
         if (byId.isEmpty()){
             throw new UserNotFoundException();
         }
         Usuario u = byId.get();
+
+        authService.validaDonoOuAdmin(u);
 
         if (usuarioUpdate.email() != null){
             u.setEmail(usuarioUpdate.email());
@@ -77,18 +86,21 @@ public class UsuarioService {
         }
 
         if (usuarioUpdate.password() != null){
-            u.setPassword(usuarioUpdate.password());
+            u.setPassword(passwordEncoder.encode(usuarioUpdate.password()));
         }
 
         usuarioRepository.save(u);
         return new UsuarioResponseDTO(u.getId(), u.getUsername(), u.getAvatarUrl());
     }
 
+    @Transactional
     public void delete(Long id){
         Optional<Usuario> usuario = usuarioRepository.findById(id);
         if (usuario.isEmpty()){
             throw new UserNotFoundException();
         }
+
+        authService.validaDonoOuAdmin(usuario.get());
         usuarioRepository.deleteById(id);
     }
 }

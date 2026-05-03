@@ -1,5 +1,6 @@
 package dev.flmelo.mangakeeper.backend.service;
 
+import dev.flmelo.mangakeeper.backend.config.security.AuthService;
 import dev.flmelo.mangakeeper.backend.dto.colecao.ColecaoResumeDTO;
 import dev.flmelo.mangakeeper.backend.dto.curtida.ColecaoCurtidaResponseDTO;
 import dev.flmelo.mangakeeper.backend.dto.curtida.UsuarioCurtidaResponseDTO;
@@ -22,11 +23,13 @@ import java.util.List;
 
 @Service
 public class CurtidaService {
+    private final AuthService authService;
     private final CurtidaRepository curtidaRepository;
     private final ColecaoRepository colecaoRepository;
     private final UsuarioRepository usuarioRepository;
 
-    public CurtidaService(CurtidaRepository curtidaRepository, ColecaoRepository colecaoRepository, UsuarioRepository usuarioRepository) {
+    public CurtidaService(AuthService authService, CurtidaRepository curtidaRepository, ColecaoRepository colecaoRepository, UsuarioRepository usuarioRepository) {
+        this.authService = authService;
         this.curtidaRepository = curtidaRepository;
         this.colecaoRepository = colecaoRepository;
         this.usuarioRepository = usuarioRepository;
@@ -47,6 +50,7 @@ public class CurtidaService {
     @Transactional
     public void removeCurtida(Long colecaoId, Long usuarioId){
         SimpleEntry<Usuario, Colecao> res = validarUsuarioEColecaoExistentes(usuarioId, colecaoId);
+        authService.validaDonoOuAdmin(res.getKey());
         if (curtidaRepository.existsByUsuarioIdAndColecaoId(usuarioId, colecaoId)){
             curtidaRepository.deleteByUsuarioIdAndColecaoId(usuarioId, colecaoId);
         }

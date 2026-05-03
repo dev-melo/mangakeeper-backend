@@ -1,5 +1,6 @@
 package dev.flmelo.mangakeeper.backend.service;
 
+import dev.flmelo.mangakeeper.backend.config.security.AuthService;
 import dev.flmelo.mangakeeper.backend.dto.volume.CreateVolumeDTO;
 import dev.flmelo.mangakeeper.backend.dto.volume.UpdateVolumeDTO;
 import dev.flmelo.mangakeeper.backend.dto.volume.VolumeResponseDTO;
@@ -18,10 +19,12 @@ import java.util.Optional;
 
 @Service
 public class VolumeService {
+    private final AuthService authService;
     private final VolumeRepository volumeRepository;
     private final MangaRepository mangaRepository;
 
-    public VolumeService(VolumeRepository volumeRepository, MangaRepository mangaRepository) {
+    public VolumeService(AuthService authService, VolumeRepository volumeRepository, MangaRepository mangaRepository) {
+        this.authService = authService;
         this.volumeRepository = volumeRepository;
         this.mangaRepository = mangaRepository;
     }
@@ -87,6 +90,7 @@ public class VolumeService {
             throw new VolumeNotFoundException();
         }
         Volume volumeAtualizado = volumeById.get();
+        authService.validaDonoOuAdmin(volumeAtualizado.getManga().getColecao().getUsuario());
         if (request.numero() != null){
             volumeAtualizado.setNumero(request.numero());
         }
@@ -120,6 +124,9 @@ public class VolumeService {
         if (volumeById.isEmpty()){
             throw new VolumeNotFoundException();
         }
+        authService.validaDonoOuAdmin(
+                volumeById.get().getManga().getColecao().getUsuario()
+        );
         volumeRepository.deleteById(id);
     }
 
