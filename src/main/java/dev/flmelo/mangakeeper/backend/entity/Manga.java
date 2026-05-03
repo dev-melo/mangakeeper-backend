@@ -6,6 +6,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
+import java.util.List;
+
 @Entity
 @Table(name = "mangas", uniqueConstraints = {
         @UniqueConstraint(columnNames = {"colecao_id", "titulo", "idioma"})})
@@ -46,6 +48,9 @@ public class Manga {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "colecao_id", nullable = false)
     private Colecao colecao;
+
+    @OneToMany(mappedBy = "manga", cascade = CascadeType.REMOVE)
+    private List<Volume> volumes;
 
     public Manga() {
     }

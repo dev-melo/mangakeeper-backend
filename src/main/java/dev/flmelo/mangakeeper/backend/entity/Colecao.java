@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
+import java.util.List;
+
 @Entity
 @Table(name = "colecoes")
 public class Colecao {
@@ -20,6 +22,9 @@ public class Colecao {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id", nullable = false)
     private Usuario usuario;
+
+    @OneToMany(mappedBy = "colecao", cascade = CascadeType.REMOVE)
+    private List<Manga> mangas;
 
     public Colecao(){}
 

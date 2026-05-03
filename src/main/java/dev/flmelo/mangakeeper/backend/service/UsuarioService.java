@@ -7,6 +7,7 @@ import dev.flmelo.mangakeeper.backend.dto.usuario.UsuarioResponseDTO;
 import dev.flmelo.mangakeeper.backend.entity.Usuario;
 import dev.flmelo.mangakeeper.backend.exceptions.UserAlreadyExistsException;
 import dev.flmelo.mangakeeper.backend.exceptions.UserNotFoundException;
+import dev.flmelo.mangakeeper.backend.repository.CurtidaRepository;
 import dev.flmelo.mangakeeper.backend.repository.UsuarioRepository;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -22,13 +23,18 @@ import java.util.Optional;
 @Service
 public class UsuarioService {
 
+
     private final AuthService authService;
+
     private final UsuarioRepository usuarioRepository;
+    private final CurtidaRepository curtidaRepository;
+
     public final PasswordEncoder passwordEncoder;
 
-    public UsuarioService(AuthService authService, UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder) {
+    public UsuarioService(AuthService authService, UsuarioRepository usuarioRepository, CurtidaRepository curtidaRepository, PasswordEncoder passwordEncoder) {
         this.authService = authService;
         this.usuarioRepository = usuarioRepository;
+        this.curtidaRepository = curtidaRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -101,6 +107,7 @@ public class UsuarioService {
         }
 
         authService.validaDonoOuAdmin(usuario.get());
+        curtidaRepository.deleteByUsuarioId(id);
         usuarioRepository.deleteById(id);
     }
 }
