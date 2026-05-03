@@ -19,7 +19,7 @@ public class WebSecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests((auth) -> auth
                                 .requestMatchers(HttpMethod.GET, "/usuarios").hasRole("ADMIN")
-                                .requestMatchers(HttpMethod.GET, "/colecoes/**", "/mangas/**", "/volumes/**", "/curtidas/colecao/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/colecoes/**", "/mangas/**", "/volumes/**", "/curtidas/colecao/**", "/usuarios/**").permitAll()
                                 .requestMatchers(HttpMethod.DELETE, "/**").authenticated()
                                 .requestMatchers(HttpMethod.PATCH, "/**").authenticated()
                                 .anyRequest().authenticated()
