@@ -17,11 +17,12 @@ public class WebSecurityConfig {
         http
 
                 .csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests((authz) -> authz
-                        .requestMatchers(HttpMethod.GET, "/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/**").hasAnyRole("ADMIN", "USER")
-                        .requestMatchers(HttpMethod.DELETE, "/**").hasRole("ADMIN")
-                        .anyRequest().authenticated()
+                .authorizeHttpRequests((auth) -> auth
+                                .requestMatchers(HttpMethod.GET, "/usuarios").hasRole("ADMIN")
+                                .requestMatchers(HttpMethod.GET, "/colecoes/**", "/mangas/**", "/volumes/**", "/curtidas/colecao/**").permitAll()
+                                .requestMatchers(HttpMethod.DELETE, "/**").authenticated()
+                                .requestMatchers(HttpMethod.PATCH, "/**").authenticated()
+                                .anyRequest().authenticated()
                 )
                 .httpBasic(Customizer.withDefaults());
         return http.build();
@@ -32,7 +33,7 @@ public class WebSecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    /*
+    /* Usuario em Memoria *
     @Bean
     public UserDetailsService userDetailsService(){
         UserDetails user = User
