@@ -39,6 +39,9 @@ public class Usuario implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private List<RoleModel> roles;
 
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.REMOVE)
+    private List<Colecao> colecaos;
+
     public Usuario() {
     }
 
