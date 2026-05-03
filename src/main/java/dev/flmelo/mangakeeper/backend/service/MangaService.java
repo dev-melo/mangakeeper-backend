@@ -1,5 +1,6 @@
 package dev.flmelo.mangakeeper.backend.service;
 
+import dev.flmelo.mangakeeper.backend.config.security.AuthService;
 import dev.flmelo.mangakeeper.backend.dto.manga.CreateMangaDTO;
 import dev.flmelo.mangakeeper.backend.dto.manga.MangaResponseDTO;
 import dev.flmelo.mangakeeper.backend.dto.manga.UpdateMangaDTO;
@@ -9,9 +10,7 @@ import dev.flmelo.mangakeeper.backend.exceptions.CollectionNotFoundException;
 import dev.flmelo.mangakeeper.backend.exceptions.MangaNotFoundException;
 import dev.flmelo.mangakeeper.backend.repository.ColecaoRepository;
 import dev.flmelo.mangakeeper.backend.repository.MangaRepository;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,10 +18,12 @@ import java.util.Optional;
 @Service
 public class MangaService {
 
+    private final AuthService authService;
     private final MangaRepository mangaRepository;
     private final ColecaoRepository colecaoRepository;
 
-    public MangaService(MangaRepository mangaRepository, ColecaoRepository colecaoRepository) {
+    public MangaService(AuthService authService, MangaRepository mangaRepository, ColecaoRepository colecaoRepository) {
+        this.authService = authService;
         this.mangaRepository = mangaRepository;
         this.colecaoRepository = colecaoRepository;
     }
@@ -113,6 +114,7 @@ public class MangaService {
             throw new MangaNotFoundException();
         }
         Manga m = mangaById.get();
+        authService.validaDonoOuAdmin(m.getColecao().getUsuario());
 
         if (request.titulo() != null){
             String titulo = clean(request.titulo());
@@ -171,6 +173,8 @@ public class MangaService {
         if (manga.isEmpty()){
             throw new MangaNotFoundException();
         }
+        authService.validaDonoOuAdmin(manga.get().getColecao().getUsuario());
+
         mangaRepository.deleteById(id);
     }
 }

@@ -1,5 +1,6 @@
 package dev.flmelo.mangakeeper.backend.service;
 
+import dev.flmelo.mangakeeper.backend.config.security.AuthService;
 import dev.flmelo.mangakeeper.backend.dto.colecao.ColecaoResponseDTO;
 import dev.flmelo.mangakeeper.backend.dto.colecao.CreateColecaoDTO;
 import dev.flmelo.mangakeeper.backend.dto.colecao.UpdateColecaoDTO;
@@ -19,10 +20,12 @@ import java.util.Optional;
 
 @Service
 public class ColecaoService {
+    private final AuthService authService;
     private final ColecaoRepository colecaoRepository;
     private final UsuarioRepository usuarioRepository;
 
-    public ColecaoService(ColecaoRepository colecaoRepository, UsuarioRepository usuarioRepository) {
+    public ColecaoService(AuthService authService, ColecaoRepository colecaoRepository, UsuarioRepository usuarioRepository) {
+        this.authService = authService;
         this.colecaoRepository = colecaoRepository;
         this.usuarioRepository = usuarioRepository;
     }
@@ -96,10 +99,10 @@ public class ColecaoService {
         if (colecaoAntiga.isEmpty()){
             throw new CollectionNotFoundException();
         }
-
         String nomeColecao = updateColecaoDTO.nome();
 
         Colecao c = colecaoAntiga.get();
+        authService.validaDonoOuAdmin(c.getUsuario());
         if (nomeColecao != null && !nomeColecao.trim().isEmpty()){
             nomeColecao = nomeColecao.trim();
             if (nomeColecao.matches("[0-9]+")){
