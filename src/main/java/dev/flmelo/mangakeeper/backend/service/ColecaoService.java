@@ -10,6 +10,7 @@ import dev.flmelo.mangakeeper.backend.exceptions.CollectionNotFoundException;
 import dev.flmelo.mangakeeper.backend.exceptions.InvalidCollectionNameException;
 import dev.flmelo.mangakeeper.backend.exceptions.UserNotFoundException;
 import dev.flmelo.mangakeeper.backend.repository.ColecaoRepository;
+import dev.flmelo.mangakeeper.backend.repository.CurtidaRepository;
 import dev.flmelo.mangakeeper.backend.repository.UsuarioRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -23,11 +24,13 @@ public class ColecaoService {
     private final AuthService authService;
     private final ColecaoRepository colecaoRepository;
     private final UsuarioRepository usuarioRepository;
+    private final CurtidaRepository curtidaRepository;
 
-    public ColecaoService(AuthService authService, ColecaoRepository colecaoRepository, UsuarioRepository usuarioRepository) {
+    public ColecaoService(AuthService authService, ColecaoRepository colecaoRepository, UsuarioRepository usuarioRepository, CurtidaRepository curtidaRepository) {
         this.authService = authService;
         this.colecaoRepository = colecaoRepository;
         this.usuarioRepository = usuarioRepository;
+        this.curtidaRepository = curtidaRepository;
     }
 
 
@@ -127,6 +130,10 @@ public class ColecaoService {
         if (colecao.isEmpty()){
             throw new CollectionNotFoundException();
         }
+
+        authService.validaDonoOuAdmin(colecao.get().getUsuario());
+        curtidaRepository.deleteByColecaoId(id);
+
         colecaoRepository.deleteById(id);
     }
 }

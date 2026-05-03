@@ -17,4 +17,7 @@ public interface CurtidaRepository extends JpaRepository<Curtida, Long> {
 
     List<Curtida> findAllByColecaoId(Long colecaoId);
 
+    void deleteByUsuarioId(Long usuarioId);
+    void deleteByColecaoId(Long colecaoId);
+
 }
