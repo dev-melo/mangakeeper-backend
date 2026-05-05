@@ -9,7 +9,7 @@ public class MangakeeperBackendApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(MangakeeperBackendApplication.class, args);
-		System.out.printf(new BCryptPasswordEncoder().encode("Iorinho22"));
+
 	}
 
 }
