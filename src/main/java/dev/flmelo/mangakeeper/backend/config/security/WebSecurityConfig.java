@@ -6,6 +6,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -17,7 +18,7 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
         http
-
+                .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests((auth) -> auth
                                 .requestMatchers(HttpMethod.GET, "/usuarios").hasRole("ADMIN")
@@ -26,8 +27,7 @@ public class WebSecurityConfig {
                                 .requestMatchers(HttpMethod.DELETE, "/**").authenticated()
                                 .requestMatchers(HttpMethod.PATCH, "/**").authenticated()
                                 .anyRequest().authenticated()
-                )
-                .httpBasic(Customizer.withDefaults());
+                );
         return http.build();
     }
 
