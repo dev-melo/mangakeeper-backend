@@ -5,6 +5,7 @@ import jakarta.validation.constraints.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -43,6 +44,19 @@ public class Usuario implements UserDetails {
     private List<Colecao> colecaos;
 
     public Usuario() {
+    }
+
+    public Usuario(String username, String password,List<RoleModel> role){
+        this.username = username;
+        this.password = password;
+        this.roles = role;
+    }
+
+    public Usuario(String username, String password, RoleModel role) {
+        this.username = username;
+        this.password = password;
+        this.roles = new ArrayList<>();
+        this.roles.add(role);
     }
 
     public Usuario(String username, String email, String password, String avatarUrl) {
