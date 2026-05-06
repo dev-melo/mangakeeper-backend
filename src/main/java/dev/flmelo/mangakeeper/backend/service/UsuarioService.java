@@ -1,6 +1,6 @@
 package dev.flmelo.mangakeeper.backend.service;
 
-import dev.flmelo.mangakeeper.backend.config.security.AuthService;
+import dev.flmelo.mangakeeper.backend.config.security.SecurityContextService;
 import dev.flmelo.mangakeeper.backend.dto.usuario.CreateUsuarioDTO;
 import dev.flmelo.mangakeeper.backend.dto.usuario.UpdateUsuarioDTO;
 import dev.flmelo.mangakeeper.backend.dto.usuario.UsuarioResponseDTO;
@@ -10,12 +10,9 @@ import dev.flmelo.mangakeeper.backend.exceptions.UserNotFoundException;
 import dev.flmelo.mangakeeper.backend.repository.CurtidaRepository;
 import dev.flmelo.mangakeeper.backend.repository.UsuarioRepository;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,15 +21,15 @@ import java.util.Optional;
 public class UsuarioService {
 
 
-    private final AuthService authService;
+    private final SecurityContextService securityContextService;
 
     private final UsuarioRepository usuarioRepository;
     private final CurtidaRepository curtidaRepository;
 
     public final PasswordEncoder passwordEncoder;
 
-    public UsuarioService(AuthService authService, UsuarioRepository usuarioRepository, CurtidaRepository curtidaRepository, PasswordEncoder passwordEncoder) {
-        this.authService = authService;
+    public UsuarioService(SecurityContextService securityContextService, UsuarioRepository usuarioRepository, CurtidaRepository curtidaRepository, PasswordEncoder passwordEncoder) {
+        this.securityContextService = securityContextService;
         this.usuarioRepository = usuarioRepository;
         this.curtidaRepository = curtidaRepository;
         this.passwordEncoder = passwordEncoder;
@@ -81,7 +78,7 @@ public class UsuarioService {
         }
         Usuario u = byId.get();
 
-        authService.validaDonoOuAdmin(u);
+        securityContextService.validaDonoOuAdmin(u);
 
         if (usuarioUpdate.email() != null){
             u.setEmail(usuarioUpdate.email());
@@ -106,7 +103,7 @@ public class UsuarioService {
             throw new UserNotFoundException();
         }
 
-        authService.validaDonoOuAdmin(usuario.get());
+        securityContextService.validaDonoOuAdmin(usuario.get());
         curtidaRepository.deleteByUsuarioId(id);
         usuarioRepository.deleteById(id);
     }

@@ -1,6 +1,6 @@
 package dev.flmelo.mangakeeper.backend.service;
 
-import dev.flmelo.mangakeeper.backend.config.security.AuthService;
+import dev.flmelo.mangakeeper.backend.config.security.SecurityContextService;
 import dev.flmelo.mangakeeper.backend.dto.colecao.ColecaoResponseDTO;
 import dev.flmelo.mangakeeper.backend.dto.colecao.CreateColecaoDTO;
 import dev.flmelo.mangakeeper.backend.dto.colecao.UpdateColecaoDTO;
@@ -12,22 +12,20 @@ import dev.flmelo.mangakeeper.backend.exceptions.UserNotFoundException;
 import dev.flmelo.mangakeeper.backend.repository.ColecaoRepository;
 import dev.flmelo.mangakeeper.backend.repository.CurtidaRepository;
 import dev.flmelo.mangakeeper.backend.repository.UsuarioRepository;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class ColecaoService {
-    private final AuthService authService;
+    private final SecurityContextService securityContextService;
     private final ColecaoRepository colecaoRepository;
     private final UsuarioRepository usuarioRepository;
     private final CurtidaRepository curtidaRepository;
 
-    public ColecaoService(AuthService authService, ColecaoRepository colecaoRepository, UsuarioRepository usuarioRepository, CurtidaRepository curtidaRepository) {
-        this.authService = authService;
+    public ColecaoService(SecurityContextService securityContextService, ColecaoRepository colecaoRepository, UsuarioRepository usuarioRepository, CurtidaRepository curtidaRepository) {
+        this.securityContextService = securityContextService;
         this.colecaoRepository = colecaoRepository;
         this.usuarioRepository = usuarioRepository;
         this.curtidaRepository = curtidaRepository;
@@ -105,7 +103,7 @@ public class ColecaoService {
         String nomeColecao = updateColecaoDTO.nome();
 
         Colecao c = colecaoAntiga.get();
-        authService.validaDonoOuAdmin(c.getUsuario());
+        securityContextService.validaDonoOuAdmin(c.getUsuario());
         if (nomeColecao != null && !nomeColecao.trim().isEmpty()){
             nomeColecao = nomeColecao.trim();
             if (nomeColecao.matches("[0-9]+")){
@@ -131,7 +129,7 @@ public class ColecaoService {
             throw new CollectionNotFoundException();
         }
 
-        authService.validaDonoOuAdmin(colecao.get().getUsuario());
+        securityContextService.validaDonoOuAdmin(colecao.get().getUsuario());
         curtidaRepository.deleteByColecaoId(id);
 
         colecaoRepository.deleteById(id);

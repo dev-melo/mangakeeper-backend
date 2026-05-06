@@ -1,6 +1,6 @@
 package dev.flmelo.mangakeeper.backend.service;
 
-import dev.flmelo.mangakeeper.backend.config.security.AuthService;
+import dev.flmelo.mangakeeper.backend.config.security.SecurityContextService;
 import dev.flmelo.mangakeeper.backend.dto.manga.CreateMangaDTO;
 import dev.flmelo.mangakeeper.backend.dto.manga.MangaResponseDTO;
 import dev.flmelo.mangakeeper.backend.dto.manga.UpdateMangaDTO;
@@ -18,12 +18,12 @@ import java.util.Optional;
 @Service
 public class MangaService {
 
-    private final AuthService authService;
+    private final SecurityContextService securityContextService;
     private final MangaRepository mangaRepository;
     private final ColecaoRepository colecaoRepository;
 
-    public MangaService(AuthService authService, MangaRepository mangaRepository, ColecaoRepository colecaoRepository) {
-        this.authService = authService;
+    public MangaService(SecurityContextService securityContextService, MangaRepository mangaRepository, ColecaoRepository colecaoRepository) {
+        this.securityContextService = securityContextService;
         this.mangaRepository = mangaRepository;
         this.colecaoRepository = colecaoRepository;
     }
@@ -114,7 +114,7 @@ public class MangaService {
             throw new MangaNotFoundException();
         }
         Manga m = mangaById.get();
-        authService.validaDonoOuAdmin(m.getColecao().getUsuario());
+        securityContextService.validaDonoOuAdmin(m.getColecao().getUsuario());
 
         if (request.titulo() != null){
             String titulo = clean(request.titulo());
@@ -173,7 +173,7 @@ public class MangaService {
         if (manga.isEmpty()){
             throw new MangaNotFoundException();
         }
-        authService.validaDonoOuAdmin(manga.get().getColecao().getUsuario());
+        securityContextService.validaDonoOuAdmin(manga.get().getColecao().getUsuario());
 
         mangaRepository.deleteById(id);
     }

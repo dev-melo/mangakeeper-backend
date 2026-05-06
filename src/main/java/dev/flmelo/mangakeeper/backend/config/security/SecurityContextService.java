@@ -6,7 +6,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 @Component
-public class AuthService {
+public class SecurityContextService {
     public Usuario getUsuarioLogado(){
         return (Usuario) SecurityContextHolder
                 .getContext()

@@ -1,6 +1,6 @@
 package dev.flmelo.mangakeeper.backend.service;
 
-import dev.flmelo.mangakeeper.backend.config.security.AuthService;
+import dev.flmelo.mangakeeper.backend.config.security.SecurityContextService;
 import dev.flmelo.mangakeeper.backend.dto.volume.CreateVolumeDTO;
 import dev.flmelo.mangakeeper.backend.dto.volume.UpdateVolumeDTO;
 import dev.flmelo.mangakeeper.backend.dto.volume.VolumeResponseDTO;
@@ -10,21 +10,19 @@ import dev.flmelo.mangakeeper.backend.exceptions.MangaNotFoundException;
 import dev.flmelo.mangakeeper.backend.exceptions.VolumeNotFoundException;
 import dev.flmelo.mangakeeper.backend.repository.MangaRepository;
 import dev.flmelo.mangakeeper.backend.repository.VolumeRepository;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class VolumeService {
-    private final AuthService authService;
+    private final SecurityContextService securityContextService;
     private final VolumeRepository volumeRepository;
     private final MangaRepository mangaRepository;
 
-    public VolumeService(AuthService authService, VolumeRepository volumeRepository, MangaRepository mangaRepository) {
-        this.authService = authService;
+    public VolumeService(SecurityContextService securityContextService, VolumeRepository volumeRepository, MangaRepository mangaRepository) {
+        this.securityContextService = securityContextService;
         this.volumeRepository = volumeRepository;
         this.mangaRepository = mangaRepository;
     }
@@ -90,7 +88,7 @@ public class VolumeService {
             throw new VolumeNotFoundException();
         }
         Volume volumeAtualizado = volumeById.get();
-        authService.validaDonoOuAdmin(volumeAtualizado.getManga().getColecao().getUsuario());
+        securityContextService.validaDonoOuAdmin(volumeAtualizado.getManga().getColecao().getUsuario());
         if (request.numero() != null){
             volumeAtualizado.setNumero(request.numero());
         }
@@ -124,7 +122,7 @@ public class VolumeService {
         if (volumeById.isEmpty()){
             throw new VolumeNotFoundException();
         }
-        authService.validaDonoOuAdmin(
+        securityContextService.validaDonoOuAdmin(
                 volumeById.get().getManga().getColecao().getUsuario()
         );
         volumeRepository.deleteById(id);

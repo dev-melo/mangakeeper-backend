@@ -1,6 +1,6 @@
 package dev.flmelo.mangakeeper.backend.service;
 
-import dev.flmelo.mangakeeper.backend.config.security.AuthService;
+import dev.flmelo.mangakeeper.backend.config.security.SecurityContextService;
 import dev.flmelo.mangakeeper.backend.dto.colecao.ColecaoResumeDTO;
 import dev.flmelo.mangakeeper.backend.dto.curtida.ColecaoCurtidaResponseDTO;
 import dev.flmelo.mangakeeper.backend.dto.curtida.UsuarioCurtidaResponseDTO;
@@ -14,22 +14,21 @@ import dev.flmelo.mangakeeper.backend.exceptions.UserNotFoundException;
 import dev.flmelo.mangakeeper.backend.repository.ColecaoRepository;
 import dev.flmelo.mangakeeper.backend.repository.CurtidaRepository;
 import dev.flmelo.mangakeeper.backend.repository.UsuarioRepository;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
+
 import java.util.AbstractMap.SimpleEntry;
 import java.util.List;
 
 @Service
 public class CurtidaService {
-    private final AuthService authService;
+    private final SecurityContextService securityContextService;
     private final CurtidaRepository curtidaRepository;
     private final ColecaoRepository colecaoRepository;
     private final UsuarioRepository usuarioRepository;
 
-    public CurtidaService(AuthService authService, CurtidaRepository curtidaRepository, ColecaoRepository colecaoRepository, UsuarioRepository usuarioRepository) {
-        this.authService = authService;
+    public CurtidaService(SecurityContextService securityContextService, CurtidaRepository curtidaRepository, ColecaoRepository colecaoRepository, UsuarioRepository usuarioRepository) {
+        this.securityContextService = securityContextService;
         this.curtidaRepository = curtidaRepository;
         this.colecaoRepository = colecaoRepository;
         this.usuarioRepository = usuarioRepository;
@@ -50,7 +49,7 @@ public class CurtidaService {
     @Transactional
     public void removeCurtida(Long colecaoId, Long usuarioId){
         SimpleEntry<Usuario, Colecao> res = validarUsuarioEColecaoExistentes(usuarioId, colecaoId);
-        authService.validaDonoOuAdmin(res.getKey());
+        securityContextService.validaDonoOuAdmin(res.getKey());
         if (curtidaRepository.existsByUsuarioIdAndColecaoId(usuarioId, colecaoId)){
             curtidaRepository.deleteByUsuarioIdAndColecaoId(usuarioId, colecaoId);
         }
