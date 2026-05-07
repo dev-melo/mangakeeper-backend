@@ -1,9 +1,11 @@
 package dev.flmelo.mangakeeper.backend.service;
 
 import dev.flmelo.mangakeeper.backend.dto.security.RegisterDTO;
+import dev.flmelo.mangakeeper.backend.dto.usuario.UsuarioResponseDTO;
 import dev.flmelo.mangakeeper.backend.entity.RoleModel;
 import dev.flmelo.mangakeeper.backend.entity.Usuario;
 import dev.flmelo.mangakeeper.backend.entity.enuns.RoleName;
+import dev.flmelo.mangakeeper.backend.exceptions.UserAlreadyExistsException;
 import dev.flmelo.mangakeeper.backend.repository.RoleRepository;
 import dev.flmelo.mangakeeper.backend.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +26,10 @@ public class AuthenticationService {
 
 
 
-    public ResponseEntity register(RegisterDTO data){
-        if (usuarioRepository.findByUsername(data.login()).isPresent()) return ResponseEntity.badRequest().build();
+    public UsuarioResponseDTO register(RegisterDTO data){
+        if (usuarioRepository.findByUsername(data.login()).isPresent()){
+            throw new UserAlreadyExistsException();
+        }
         String encryptedPassword = new BCryptPasswordEncoder().encode(data.password());
         Usuario newUser = new Usuario(data.login(), data.email(), encryptedPassword,  data.avatarUrl());
         RoleModel role = roleRepository.findByRoleName(RoleName.ROLE_USER)
@@ -36,6 +40,6 @@ public class AuthenticationService {
         } catch (DataIntegrityViolationException e){
             throw new DataIntegrityViolationException("Usuario já existe");
         }
-        return ResponseEntity.ok().build();
+        return new UsuarioResponseDTO(newUser.getId(), newUser.getUsername(), newUser.getAvatarUrl());
     }
 }

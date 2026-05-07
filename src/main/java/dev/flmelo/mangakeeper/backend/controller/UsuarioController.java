@@ -1,6 +1,5 @@
 package dev.flmelo.mangakeeper.backend.controller;
 
-import dev.flmelo.mangakeeper.backend.dto.usuario.CreateUsuarioDTO;
 import dev.flmelo.mangakeeper.backend.dto.usuario.UpdateUsuarioDTO;
 import dev.flmelo.mangakeeper.backend.dto.usuario.UsuarioResponseDTO;
 import dev.flmelo.mangakeeper.backend.service.UsuarioService;
@@ -11,9 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -48,22 +45,6 @@ public class UsuarioController {
         return ResponseEntity.ok().body(usuario);
     }
 
-    @Operation(summary = "Criar usuário", description = "Criar um usuário no sistema.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Usuário criado com sucesso"),
-            @ApiResponse(responseCode = "400", description = "Dados inválidos")
-    })
-    @PostMapping
-    public ResponseEntity<UsuarioResponseDTO> createUser(@Valid @RequestBody CreateUsuarioDTO request){
-        UsuarioResponseDTO usuarioSalvo = usuarioService.create(request);
-        URI uri = ServletUriComponentsBuilder
-                .fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(usuarioSalvo.id())
-                .toUri();
-
-        return ResponseEntity.created(uri).body(usuarioSalvo);
-    }
 
     @Operation(summary = "Atualizar usuário", description = "Atualiza dados do usuário")
     @ApiResponses(value = {

@@ -1,15 +1,12 @@
 package dev.flmelo.mangakeeper.backend.service;
 
 import dev.flmelo.mangakeeper.backend.config.security.SecurityContextService;
-import dev.flmelo.mangakeeper.backend.dto.usuario.CreateUsuarioDTO;
 import dev.flmelo.mangakeeper.backend.dto.usuario.UpdateUsuarioDTO;
 import dev.flmelo.mangakeeper.backend.dto.usuario.UsuarioResponseDTO;
 import dev.flmelo.mangakeeper.backend.entity.Usuario;
-import dev.flmelo.mangakeeper.backend.exceptions.UserAlreadyExistsException;
 import dev.flmelo.mangakeeper.backend.exceptions.UserNotFoundException;
 import dev.flmelo.mangakeeper.backend.repository.CurtidaRepository;
 import dev.flmelo.mangakeeper.backend.repository.UsuarioRepository;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -58,18 +55,6 @@ public class UsuarioService {
 
     }
 
-    public UsuarioResponseDTO create(CreateUsuarioDTO request) {
-        String senhaCriptografada = passwordEncoder.encode(request.password());
-        Usuario u = new Usuario(request.username(), request.email(), senhaCriptografada, request.avatarUrl());
-        try {
-            Usuario usuarioSalvo = usuarioRepository.save(u);
-            return new UsuarioResponseDTO(usuarioSalvo.getId(), usuarioSalvo.getUsername(), usuarioSalvo.getAvatarUrl());
-
-        } catch (DataIntegrityViolationException e){
-            throw new UserAlreadyExistsException();
-        }
-
-    }
 
     public UsuarioResponseDTO updateUsuario(Long id, UpdateUsuarioDTO usuarioUpdate) {
         Optional<Usuario> byId = usuarioRepository.findById(id);
