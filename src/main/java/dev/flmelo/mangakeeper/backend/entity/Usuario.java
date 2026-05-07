@@ -2,6 +2,7 @@ package dev.flmelo.mangakeeper.backend.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -11,6 +12,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "usuarios")
+@NoArgsConstructor
 public class Usuario implements UserDetails {
 
     @Id

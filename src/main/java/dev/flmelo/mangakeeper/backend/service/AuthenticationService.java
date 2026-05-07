@@ -10,11 +10,11 @@ import dev.flmelo.mangakeeper.backend.repository.RoleRepository;
 import dev.flmelo.mangakeeper.backend.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Locale;
 
 @Service
 public class AuthenticationService {
@@ -31,7 +31,7 @@ public class AuthenticationService {
             throw new UserAlreadyExistsException();
         }
         String encryptedPassword = new BCryptPasswordEncoder().encode(data.password());
-        Usuario newUser = new Usuario(data.login(), data.email(), encryptedPassword,  data.avatarUrl());
+        Usuario newUser = new Usuario(data.login().toLowerCase(Locale.ROOT), data.email(), encryptedPassword,  data.avatarUrl());
         RoleModel role = roleRepository.findByRoleName(RoleName.ROLE_USER)
                 .orElseThrow(() -> new RuntimeException("Role não Encontrada"));
         newUser.setRoles(List.of(role));
