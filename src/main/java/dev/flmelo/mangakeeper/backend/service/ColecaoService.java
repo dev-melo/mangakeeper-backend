@@ -8,10 +8,8 @@ import dev.flmelo.mangakeeper.backend.entity.Colecao;
 import dev.flmelo.mangakeeper.backend.entity.Usuario;
 import dev.flmelo.mangakeeper.backend.exceptions.CollectionNotFoundException;
 import dev.flmelo.mangakeeper.backend.exceptions.InvalidCollectionNameException;
-import dev.flmelo.mangakeeper.backend.exceptions.UserNotFoundException;
 import dev.flmelo.mangakeeper.backend.repository.ColecaoRepository;
 import dev.flmelo.mangakeeper.backend.repository.CurtidaRepository;
-import dev.flmelo.mangakeeper.backend.repository.UsuarioRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,13 +19,11 @@ import java.util.Optional;
 public class ColecaoService {
     private final SecurityContextService securityContextService;
     private final ColecaoRepository colecaoRepository;
-    private final UsuarioRepository usuarioRepository;
     private final CurtidaRepository curtidaRepository;
 
-    public ColecaoService(SecurityContextService securityContextService, ColecaoRepository colecaoRepository, UsuarioRepository usuarioRepository, CurtidaRepository curtidaRepository) {
+    public ColecaoService(SecurityContextService securityContextService, ColecaoRepository colecaoRepository, CurtidaRepository curtidaRepository) {
         this.securityContextService = securityContextService;
         this.colecaoRepository = colecaoRepository;
-        this.usuarioRepository = usuarioRepository;
         this.curtidaRepository = curtidaRepository;
     }
 
@@ -62,13 +58,15 @@ public class ColecaoService {
     public ColecaoResponseDTO create(CreateColecaoDTO request){
         Colecao novaColecao = new Colecao();
 
-        Optional<Usuario> usuario = usuarioRepository.findById(request.usuarioId());
+        Usuario u = securityContextService.getUsuarioLogado();
 
-        if (usuario.isEmpty()){
-            throw new UserNotFoundException();
-        }
-
-        Usuario u = usuario.get();
+//        Optional<Usuario> usuario = usuarioRepository.findById(request.usuarioId());
+//
+//        if (usuario.isEmpty()){
+//            throw new UserNotFoundException();
+//        }
+//
+//        Usuario u = usuario.get();
 
         //Set Nome da Coleção
         if (request.nome() == null || request.nome().trim().isEmpty() ){
@@ -96,13 +94,10 @@ public class ColecaoService {
     }
 
     public ColecaoResponseDTO updateColecao(Long id, UpdateColecaoDTO updateColecaoDTO){
-        Optional<Colecao> colecaoAntiga = colecaoRepository.findById(id);
-        if (colecaoAntiga.isEmpty()){
-            throw new CollectionNotFoundException();
-        }
+
+        Colecao c = colecaoRepository.findById(id).orElseThrow(CollectionNotFoundException::new);
         String nomeColecao = updateColecaoDTO.nome();
 
-        Colecao c = colecaoAntiga.get();
         securityContextService.validaDonoOuAdmin(c.getUsuario());
         if (nomeColecao != null && !nomeColecao.trim().isEmpty()){
             nomeColecao = nomeColecao.trim();
@@ -124,12 +119,9 @@ public class ColecaoService {
     }
 
     public void delete(Long id){
-        Optional<Colecao> colecao = colecaoRepository.findById(id);
-        if (colecao.isEmpty()){
-            throw new CollectionNotFoundException();
-        }
+        Colecao colecao = colecaoRepository.findById(id).orElseThrow(CollectionNotFoundException::new);
 
-        securityContextService.validaDonoOuAdmin(colecao.get().getUsuario());
+        securityContextService.validaDonoOuAdmin(colecao.getUsuario());
         curtidaRepository.deleteByColecaoId(id);
 
         colecaoRepository.deleteById(id);
