@@ -1,5 +1,7 @@
 package dev.flmelo.mangakeeper.backend.service;
 
+import dev.flmelo.mangakeeper.backend.dto.security.AuthenticationDTO;
+import dev.flmelo.mangakeeper.backend.dto.security.LoginResponseDTO;
 import dev.flmelo.mangakeeper.backend.dto.security.RegisterDTO;
 import dev.flmelo.mangakeeper.backend.dto.usuario.UsuarioResponseDTO;
 import dev.flmelo.mangakeeper.backend.entity.RoleModel;
@@ -8,8 +10,10 @@ import dev.flmelo.mangakeeper.backend.entity.enuns.RoleName;
 import dev.flmelo.mangakeeper.backend.exceptions.UserAlreadyExistsException;
 import dev.flmelo.mangakeeper.backend.repository.RoleRepository;
 import dev.flmelo.mangakeeper.backend.repository.UsuarioRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -18,13 +22,18 @@ import java.util.Locale;
 
 @Service
 public class AuthenticationService {
-    @Autowired
-    private UsuarioRepository usuarioRepository;
+    private final UsuarioRepository usuarioRepository;
+    private final RoleRepository roleRepository;
+    private final AuthenticationManager authenticationManager;
+    private final TokenService tokenService;
 
-    @Autowired
-    private RoleRepository roleRepository;
-
-
+    public AuthenticationService(UsuarioRepository usuarioRepository, RoleRepository roleRepository,
+                                AuthenticationManager authenticationManager, TokenService tokenService) {
+        this.usuarioRepository = usuarioRepository;
+        this.roleRepository = roleRepository;
+        this.authenticationManager = authenticationManager;
+        this.tokenService = tokenService;
+    }
 
     public UsuarioResponseDTO register(RegisterDTO data){
         if (usuarioRepository.findByUsername(data.login()).isPresent()){
@@ -42,4 +51,18 @@ public class AuthenticationService {
         }
         return new UsuarioResponseDTO(newUser.getId(), newUser.getUsername(), newUser.getAvatarUrl());
     }
+
+    public LoginResponseDTO login(AuthenticationDTO authData){
+        try {
+            var usernamePassword = new UsernamePasswordAuthenticationToken(authData.login(), authData.password());
+            var auth = this.authenticationManager.authenticate(usernamePassword);
+            var token = tokenService.gerarToken((Usuario) auth.getPrincipal());
+            return new LoginResponseDTO(token);
+        } catch (BadCredentialsException e){
+            throw new BadCredentialsException("Usuário ou senha inválidos");
+        } catch (Exception e){
+            throw new RuntimeException("Erro ao autenticar usuário", e);
+        }
+    }
+
 }

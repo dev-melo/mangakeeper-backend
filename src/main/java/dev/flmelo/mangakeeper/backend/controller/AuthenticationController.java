@@ -4,21 +4,13 @@ import dev.flmelo.mangakeeper.backend.dto.security.AuthenticationDTO;
 import dev.flmelo.mangakeeper.backend.dto.security.LoginResponseDTO;
 import dev.flmelo.mangakeeper.backend.dto.security.RegisterDTO;
 import dev.flmelo.mangakeeper.backend.dto.usuario.UsuarioResponseDTO;
-import dev.flmelo.mangakeeper.backend.entity.Usuario;
-import dev.flmelo.mangakeeper.backend.repository.UsuarioRepository;
 import dev.flmelo.mangakeeper.backend.service.AuthenticationService;
-import dev.flmelo.mangakeeper.backend.service.TokenService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,14 +24,11 @@ import java.net.URI;
 @Tag(name = "Autenticação", description = "Endpoints para registro, login e geração de tokens JWT")
 public class AuthenticationController {
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
+    private final AuthenticationService authenticationService;
 
-    @Autowired
-    private AuthenticationService authenticationService;
-
-    @Autowired
-    private TokenService tokenService;
+    public AuthenticationController(AuthenticationService authenticationService) {
+        this.authenticationService = authenticationService;
+    }
 
     @Operation(
             summary = "Realiza autenticação do usuário",
@@ -64,20 +53,9 @@ public class AuthenticationController {
             )
     })
     @PostMapping(value = "/login")
-    public ResponseEntity login(@RequestBody @Valid AuthenticationDTO data){
-        try {
-
-
-            var usernamePassword = new UsernamePasswordAuthenticationToken(data.login(), data.password());
-            var auth = this.authenticationManager.authenticate(usernamePassword);
-
-            var token = tokenService.gerarToken((Usuario) auth.getPrincipal());
-
-            return ResponseEntity.ok(new LoginResponseDTO(token));
-        } catch (Exception e){
-            e.printStackTrace();
-            return ResponseEntity.badRequest().build();
-        }
+    public ResponseEntity<LoginResponseDTO> login(@RequestBody @Valid AuthenticationDTO data){
+        LoginResponseDTO loginResponse = authenticationService.login(data);
+        return ResponseEntity.ok(loginResponse);
     }
 
     @Operation(summary = "Criar usuário", description = "Criar um usuário no sistema.")
