@@ -13,7 +13,6 @@ import dev.flmelo.mangakeeper.backend.repository.VolumeRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class VolumeService {
@@ -41,11 +40,7 @@ public class VolumeService {
     }
 
     public VolumeResponseDTO getById(Long id){
-        Optional<Volume> volumeById = volumeRepository.findById(id);
-        if (volumeById.isEmpty()){
-            throw new VolumeNotFoundException();
-        }
-        Volume v = volumeById.get();
+        Volume v = volumeRepository.findById(id).orElseThrow(VolumeNotFoundException::new);
         return new VolumeResponseDTO(
                 v.getId(),
                 v.getNumero(),
@@ -57,12 +52,8 @@ public class VolumeService {
     }
 
     public VolumeResponseDTO create(CreateVolumeDTO request){
-        Optional<Manga> manga = mangaRepository.findById(request.mangaId());
-        if (manga.isEmpty()){
-            throw new MangaNotFoundException();
-        }
-        Manga m = manga.get();
-
+        Manga m = mangaRepository.findById(request.mangaId()).orElseThrow(MangaNotFoundException::new);
+        securityContextService.validaDonoOuAdmin(m.getColecao().getUsuario());
         Volume volume = new Volume(
                 request.numero(),
                 clean(request.codigoDeBarras()),
@@ -75,7 +66,7 @@ public class VolumeService {
 
         return new VolumeResponseDTO(
                 volumeSalvo.getId(),
-                volume.getNumero(),
+                volumeSalvo.getNumero(),
                 volumeSalvo.getCodigoDeBarras(),
                 volumeSalvo.getIsbn(),
                 volumeSalvo.getManga().getId(),
@@ -83,26 +74,19 @@ public class VolumeService {
     }
 
     public VolumeResponseDTO update(Long id, UpdateVolumeDTO request){
-        Optional<Volume> volumeById = volumeRepository.findById(id);
-        if (volumeById.isEmpty()){
-            throw new VolumeNotFoundException();
-        }
-        Volume volumeAtualizado = volumeById.get();
+        Volume volumeAtualizado = volumeRepository.findById(id).orElseThrow(VolumeNotFoundException::new);
         securityContextService.validaDonoOuAdmin(volumeAtualizado.getManga().getColecao().getUsuario());
         if (request.numero() != null){
             volumeAtualizado.setNumero(request.numero());
         }
         if (request.codigoDeBarras() != null){
-            String cdb = request.codigoDeBarras().trim();
-            volumeAtualizado.setCodigoDeBarras(cdb);
+            volumeAtualizado.setCodigoDeBarras(clean(request.codigoDeBarras()));
         }
         if (request.isbn() != null){
-            String isbn = request.isbn().trim();
-            volumeAtualizado.setIsbn(isbn);
+            volumeAtualizado.setIsbn(clean(request.isbn()));
         }
         if (request.imagemUrl() != null) {
-            String imgUrl = request.imagemUrl().trim();
-            volumeAtualizado.setImagemUrl(imgUrl);
+            volumeAtualizado.setImagemUrl(clean(request.imagemUrl()));
         }
         Volume v = volumeRepository.save(volumeAtualizado);
 
@@ -118,13 +102,8 @@ public class VolumeService {
     }
 
     public void delete(Long id){
-        Optional<Volume> volumeById = volumeRepository.findById(id);
-        if (volumeById.isEmpty()){
-            throw new VolumeNotFoundException();
-        }
-        securityContextService.validaDonoOuAdmin(
-                volumeById.get().getManga().getColecao().getUsuario()
-        );
+        Volume volume = volumeRepository.findById(id).orElseThrow(VolumeNotFoundException::new);
+        securityContextService.validaDonoOuAdmin(volume.getManga().getColecao().getUsuario());
         volumeRepository.deleteById(id);
     }
 
