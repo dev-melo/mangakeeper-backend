@@ -40,12 +40,7 @@ public class ColecaoService {
     }
 
     public ColecaoResponseDTO getById(Long id){
-        Optional<Colecao> colecaoById = colecaoRepository.findById(id);
-        if (colecaoById.isEmpty()){
-            throw new CollectionNotFoundException();
-        }
-
-        Colecao colecao = colecaoById.get();
+        Colecao colecao = colecaoRepository.findById(id).orElseThrow(CollectionNotFoundException::new);
 
         return new ColecaoResponseDTO(
                 colecao.getId(),
