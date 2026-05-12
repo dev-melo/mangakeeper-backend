@@ -57,38 +57,32 @@ public class UsuarioService {
 
 
     public UsuarioResponseDTO updateUsuario(Long id, UpdateUsuarioDTO usuarioUpdate) {
-        Optional<Usuario> byId = usuarioRepository.findById(id);
-        if (byId.isEmpty()){
-            throw new UserNotFoundException();
-        }
-        Usuario u = byId.get();
+        Usuario alvo = usuarioRepository.findById(id).orElseThrow(UserNotFoundException::new);
+        
 
-        securityContextService.validaDonoOuAdmin(u);
+        securityContextService.validaDonoOuAdmin(alvo);
 
         if (usuarioUpdate.email() != null){
-            u.setEmail(usuarioUpdate.email());
+            alvo.setEmail(usuarioUpdate.email());
         }
 
         if (usuarioUpdate.avatarUrl() != null){
-            u.setAvatarUrl(usuarioUpdate.avatarUrl());
+            alvo.setAvatarUrl(usuarioUpdate.avatarUrl());
         }
 
         if (usuarioUpdate.password() != null){
-            u.setPassword(passwordEncoder.encode(usuarioUpdate.password()));
+            alvo.setPassword(passwordEncoder.encode(usuarioUpdate.password()));
         }
 
-        usuarioRepository.save(u);
-        return new UsuarioResponseDTO(u.getId(), u.getUsername(), u.getAvatarUrl());
+        usuarioRepository.save(alvo);
+        return new UsuarioResponseDTO(alvo.getId(), alvo.getUsername(), alvo.getAvatarUrl());
     }
 
     @Transactional
     public void delete(Long id){
-        Optional<Usuario> usuario = usuarioRepository.findById(id);
-        if (usuario.isEmpty()){
-            throw new UserNotFoundException();
-        }
+        Usuario alvo = usuarioRepository.findById(id).orElseThrow(UserNotFoundException::new);
 
-        securityContextService.validaDonoOuAdmin(usuario.get());
+        securityContextService.validaDonoOuAdmin(alvo);
         curtidaRepository.deleteByUsuarioId(id);
         usuarioRepository.deleteById(id);
     }
