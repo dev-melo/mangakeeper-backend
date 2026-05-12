@@ -2,14 +2,17 @@ package dev.flmelo.mangakeeper.backend.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 @Entity
 @Table(name = "usuarios")
+@NoArgsConstructor
 public class Usuario implements UserDetails {
 
     @Id
@@ -23,7 +26,6 @@ public class Usuario implements UserDetails {
 
     @Column(unique = true)
     @Email(message = "O e-mail deve ser válido.")
-    @NotBlank
     @Size(max = 40)
     private String email;
 
@@ -42,7 +44,12 @@ public class Usuario implements UserDetails {
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.REMOVE)
     private List<Colecao> colecaos;
 
-    public Usuario() {
+    public List<RoleModel> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<RoleModel> roles) {
+        this.roles = roles;
     }
 
     public Usuario(String username, String email, String password, String avatarUrl) {

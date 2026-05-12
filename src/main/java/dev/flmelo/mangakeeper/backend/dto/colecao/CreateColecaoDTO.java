@@ -7,11 +7,7 @@ import jakarta.validation.constraints.NotNull;
 
 public record CreateColecaoDTO(
 
-        String nome,
-
-
-        @JsonProperty(value = "usuario_id")
-        Long usuarioId
+        String nome
 
 ) {
 }

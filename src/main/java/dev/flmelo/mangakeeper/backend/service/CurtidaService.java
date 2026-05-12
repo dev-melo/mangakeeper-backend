@@ -1,6 +1,6 @@
 package dev.flmelo.mangakeeper.backend.service;
 
-import dev.flmelo.mangakeeper.backend.config.security.AuthService;
+import dev.flmelo.mangakeeper.backend.config.security.SecurityContextService;
 import dev.flmelo.mangakeeper.backend.dto.colecao.ColecaoResumeDTO;
 import dev.flmelo.mangakeeper.backend.dto.curtida.ColecaoCurtidaResponseDTO;
 import dev.flmelo.mangakeeper.backend.dto.curtida.UsuarioCurtidaResponseDTO;
@@ -14,45 +14,42 @@ import dev.flmelo.mangakeeper.backend.exceptions.UserNotFoundException;
 import dev.flmelo.mangakeeper.backend.repository.ColecaoRepository;
 import dev.flmelo.mangakeeper.backend.repository.CurtidaRepository;
 import dev.flmelo.mangakeeper.backend.repository.UsuarioRepository;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
-import java.util.AbstractMap.SimpleEntry;
+
 import java.util.List;
 
 @Service
 public class CurtidaService {
-    private final AuthService authService;
+    private final SecurityContextService securityContextService;
     private final CurtidaRepository curtidaRepository;
     private final ColecaoRepository colecaoRepository;
     private final UsuarioRepository usuarioRepository;
 
-    public CurtidaService(AuthService authService, CurtidaRepository curtidaRepository, ColecaoRepository colecaoRepository, UsuarioRepository usuarioRepository) {
-        this.authService = authService;
+    public CurtidaService(SecurityContextService securityContextService, CurtidaRepository curtidaRepository, ColecaoRepository colecaoRepository, UsuarioRepository usuarioRepository) {
+        this.securityContextService = securityContextService;
         this.curtidaRepository = curtidaRepository;
         this.colecaoRepository = colecaoRepository;
         this.usuarioRepository = usuarioRepository;
     }
 
     //Coleções
-    public void curtirColecao(Long usuarioId, Long colecaoId) {
-        SimpleEntry<Usuario, Colecao> res = validarUsuarioEColecaoExistentes(usuarioId, colecaoId);
-        if (curtidaRepository.existsByUsuarioIdAndColecaoId(usuarioId, colecaoId)) {
+    public void curtirColecao(Long colecaoId) {
+        Usuario usuarioLogado = securityContextService.getUsuarioLogado();
+        Colecao colecao = colecaoRepository.findById(colecaoId).orElseThrow(CollectionNotFoundException::new);
+        if (curtidaRepository.existsByUsuarioIdAndColecaoId(usuarioLogado.getId(), colecao.getId())) {
             throw new LikeAlreadyExistsException();
         }
-        Usuario usuario = res.getKey();
-        Colecao colecao = res.getValue();
-        Curtida curtida = new Curtida(usuario, colecao);
+        Curtida curtida = new Curtida(usuarioLogado, colecao);
         curtidaRepository.save(curtida);
     }
 
     @Transactional
-    public void removeCurtida(Long colecaoId, Long usuarioId){
-        SimpleEntry<Usuario, Colecao> res = validarUsuarioEColecaoExistentes(usuarioId, colecaoId);
-        authService.validaDonoOuAdmin(res.getKey());
-        if (curtidaRepository.existsByUsuarioIdAndColecaoId(usuarioId, colecaoId)){
-            curtidaRepository.deleteByUsuarioIdAndColecaoId(usuarioId, colecaoId);
+    public void removeCurtida(Long colecaoId){
+        Usuario usuarioLogado = securityContextService.getUsuarioLogado();
+        Colecao colecao = colecaoRepository.findById(colecaoId).orElseThrow(CollectionNotFoundException::new);
+        if (curtidaRepository.existsByUsuarioIdAndColecaoId(usuarioLogado.getId(), colecao.getId())){
+            curtidaRepository.deleteByUsuarioIdAndColecaoId(usuarioLogado.getId(), colecao.getId());
         }
     }
 
@@ -77,28 +74,18 @@ public class CurtidaService {
     public UsuarioCurtidaResponseDTO totalCurtidasUsuario(Long usuarioId){
         Usuario usuario = usuarioRepository.findById(usuarioId).orElseThrow(UserNotFoundException::new);
         Integer qtdCurtidas = curtidaRepository.countByUsuarioId(usuarioId);
-        List<Colecao> listColecoes = colecaoRepository.findAllByUsuarioId(usuarioId);
-        List<ColecaoResumeDTO> colecaoDTO = listColecoes
+        List<Curtida> listCurtidas = curtidaRepository.findAllByUsuarioId(usuarioId);
+        List<ColecaoResumeDTO> colecaoDTO = listCurtidas
                 .stream()
-                .map(colecao -> new ColecaoResumeDTO(
-                        colecao.getId(),
-                        colecao.getNome()))
+                .map(curtida -> new ColecaoResumeDTO(
+                        curtida.getColecao().getId(),
+                        curtida.getColecao().getNome()
+                        ))
                 .toList();
         return new UsuarioCurtidaResponseDTO(
                 usuario.getId(),
                 qtdCurtidas,
                 colecaoDTO
         );
-    }
-
-    private SimpleEntry<Usuario, Colecao> validarUsuarioEColecaoExistentes(Long usuarioId, Long colecaoId) {
-        Usuario usuario = usuarioRepository.findById(usuarioId).orElseThrow(
-                UserNotFoundException::new
-        );
-
-        Colecao colecao = colecaoRepository.findById(colecaoId).orElseThrow(
-                CollectionNotFoundException::new
-        );
-        return new SimpleEntry<>(usuario, colecao);
     }
 }

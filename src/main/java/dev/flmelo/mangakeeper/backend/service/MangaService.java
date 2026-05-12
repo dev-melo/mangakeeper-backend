@@ -1,6 +1,6 @@
 package dev.flmelo.mangakeeper.backend.service;
 
-import dev.flmelo.mangakeeper.backend.config.security.AuthService;
+import dev.flmelo.mangakeeper.backend.config.security.SecurityContextService;
 import dev.flmelo.mangakeeper.backend.dto.manga.CreateMangaDTO;
 import dev.flmelo.mangakeeper.backend.dto.manga.MangaResponseDTO;
 import dev.flmelo.mangakeeper.backend.dto.manga.UpdateMangaDTO;
@@ -18,12 +18,12 @@ import java.util.Optional;
 @Service
 public class MangaService {
 
-    private final AuthService authService;
+    private final SecurityContextService securityContextService;
     private final MangaRepository mangaRepository;
     private final ColecaoRepository colecaoRepository;
 
-    public MangaService(AuthService authService, MangaRepository mangaRepository, ColecaoRepository colecaoRepository) {
-        this.authService = authService;
+    public MangaService(SecurityContextService securityContextService, MangaRepository mangaRepository, ColecaoRepository colecaoRepository) {
+        this.securityContextService = securityContextService;
         this.mangaRepository = mangaRepository;
         this.colecaoRepository = colecaoRepository;
     }
@@ -46,11 +46,8 @@ public class MangaService {
     }
 
     public MangaResponseDTO getById(Long id){
-        Optional<Manga> mangaById = mangaRepository.findById(id);
-        if (mangaById.isEmpty()){
-            throw new MangaNotFoundException();
-        }
-        Manga manga = mangaById.get();
+        Manga manga = mangaRepository.findById(id).orElseThrow(MangaNotFoundException::new);
+
         return new MangaResponseDTO(
                 manga.getId(),
                 manga.getTitulo(),
@@ -66,12 +63,8 @@ public class MangaService {
     }
 
     public MangaResponseDTO create(CreateMangaDTO request){
-        Optional<Colecao> colecao = colecaoRepository.findById(request.colecaoId());
-        if (colecao.isEmpty()){
-            throw new CollectionNotFoundException();
-        }
-        Colecao c = colecao.get();
-
+        Colecao c = colecaoRepository.findById(request.colecaoId()).orElseThrow(CollectionNotFoundException::new);
+        securityContextService.validaDonoOuAdmin(c.getUsuario());
         String issn = request.issn();
         if (issn != null && issn.trim().isEmpty()){
             issn = null;
@@ -88,9 +81,6 @@ public class MangaService {
                 request.totalVolumes(),
                 c
         );
-
-
-
         Manga mangaSalvo = mangaRepository.save(manga);
 
         return new MangaResponseDTO(
@@ -109,12 +99,9 @@ public class MangaService {
     }
 
     public MangaResponseDTO update(Long id, UpdateMangaDTO request){
-        Optional<Manga> mangaById = mangaRepository.findById(id);
-        if (mangaById.isEmpty()){
-            throw new MangaNotFoundException();
-        }
-        Manga m = mangaById.get();
-        authService.validaDonoOuAdmin(m.getColecao().getUsuario());
+
+        Manga m = mangaRepository.findById(id).orElseThrow(MangaNotFoundException::new);
+        securityContextService.validaDonoOuAdmin(m.getColecao().getUsuario());
 
         if (request.titulo() != null){
             String titulo = clean(request.titulo());
@@ -169,12 +156,8 @@ public class MangaService {
     }
 
     public void delete(Long id){
-        Optional<Manga> manga = mangaRepository.findById(id);
-        if (manga.isEmpty()){
-            throw new MangaNotFoundException();
-        }
-        authService.validaDonoOuAdmin(manga.get().getColecao().getUsuario());
-
+        Manga manga = mangaRepository.findById(id).orElseThrow(MangaNotFoundException::new);
+        securityContextService.validaDonoOuAdmin(manga.getColecao().getUsuario());
         mangaRepository.deleteById(id);
     }
 }
