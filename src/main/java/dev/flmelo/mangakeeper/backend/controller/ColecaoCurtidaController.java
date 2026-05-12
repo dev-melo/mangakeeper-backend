@@ -28,8 +28,8 @@ public class ColecaoCurtidaController {
             @ApiResponse(responseCode = "409", description = "Usuário já curtiu essa coleção")
     })
     @PostMapping("/{colecaoId}/likes")
-    public ResponseEntity<?> curtirColecao(@Valid @PathVariable Long colecaoId, @RequestParam Long usuarioId){
-        curtidaService.curtirColecao(usuarioId, colecaoId);
+    public ResponseEntity<?> curtirColecao(@Valid @PathVariable Long colecaoId){
+        curtidaService.curtirColecao(colecaoId);
         return ResponseEntity.noContent().build();
     }
 
@@ -39,8 +39,8 @@ public class ColecaoCurtidaController {
             @ApiResponse(responseCode = "404", description = "Coleção ou usuário não encontrado.")
     })
     @DeleteMapping("/{colecaoId}/likes")
-    public ResponseEntity<?> removeCurtida(@PathVariable Long colecaoId, @RequestParam Long usuarioId){
-        curtidaService.removeCurtida(colecaoId, usuarioId);
+    public ResponseEntity<?> removeCurtida(@PathVariable Long colecaoId){
+        curtidaService.removeCurtida(colecaoId);
         return ResponseEntity.noContent().build();
     }
 
