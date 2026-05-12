@@ -11,6 +11,7 @@ import dev.flmelo.mangakeeper.backend.service.TokenService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -28,6 +29,7 @@ import java.net.URI;
 
 @RestController
 @RequestMapping(value = "auth")
+@Tag(name = "Autenticação", description = "Endpoints para registro, login e geração de tokens JWT")
 public class AuthenticationController {
 
     @Autowired
