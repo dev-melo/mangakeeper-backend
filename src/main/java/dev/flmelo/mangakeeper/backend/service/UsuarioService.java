@@ -44,13 +44,7 @@ public class UsuarioService {
     }
 
     public UsuarioResponseDTO getById(Long id) {
-        Optional<Usuario> byId = usuarioRepository.findById(id);
-        if (byId.isEmpty())
-        {
-            throw new UserNotFoundException();
-        }
-
-        Usuario u = byId.get();
+        Usuario u = usuarioRepository.findById(id).orElseThrow(UserNotFoundException::new);
         return new UsuarioResponseDTO(u.getId(), u.getUsername(), u.getAvatarUrl());
 
     }
