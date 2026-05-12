@@ -74,12 +74,13 @@ public class CurtidaService {
     public UsuarioCurtidaResponseDTO totalCurtidasUsuario(Long usuarioId){
         Usuario usuario = usuarioRepository.findById(usuarioId).orElseThrow(UserNotFoundException::new);
         Integer qtdCurtidas = curtidaRepository.countByUsuarioId(usuarioId);
-        List<Colecao> listColecoes = colecaoRepository.findAllByUsuarioId(usuarioId);
-        List<ColecaoResumeDTO> colecaoDTO = listColecoes
+        List<Curtida> listCurtidas = curtidaRepository.findAllByUsuarioId(usuarioId);
+        List<ColecaoResumeDTO> colecaoDTO = listCurtidas
                 .stream()
-                .map(colecao -> new ColecaoResumeDTO(
-                        colecao.getId(),
-                        colecao.getNome()))
+                .map(curtida -> new ColecaoResumeDTO(
+                        curtida.getColecao().getId(),
+                        curtida.getColecao().getNome()
+                        ))
                 .toList();
         return new UsuarioCurtidaResponseDTO(
                 usuario.getId(),
