@@ -11,6 +11,7 @@ import dev.flmelo.mangakeeper.backend.exceptions.InvalidCollectionNameException;
 import dev.flmelo.mangakeeper.backend.repository.ColecaoRepository;
 import dev.flmelo.mangakeeper.backend.repository.CurtidaRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -88,6 +89,7 @@ public class ColecaoService {
 
     }
 
+    @Transactional
     public ColecaoResponseDTO updateColecao(Long id, UpdateColecaoDTO updateColecaoDTO){
 
         Colecao c = colecaoRepository.findById(id).orElseThrow(CollectionNotFoundException::new);
@@ -113,6 +115,7 @@ public class ColecaoService {
         );
     }
 
+    @Transactional
     public void delete(Long id){
         Colecao colecao = colecaoRepository.findById(id).orElseThrow(CollectionNotFoundException::new);
 

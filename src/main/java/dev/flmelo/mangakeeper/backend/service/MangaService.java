@@ -11,6 +11,7 @@ import dev.flmelo.mangakeeper.backend.exceptions.MangaNotFoundException;
 import dev.flmelo.mangakeeper.backend.repository.ColecaoRepository;
 import dev.flmelo.mangakeeper.backend.repository.MangaRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -62,6 +63,7 @@ public class MangaService {
         );
     }
 
+    @Transactional
     public MangaResponseDTO create(CreateMangaDTO request){
         Colecao c = colecaoRepository.findById(request.colecaoId()).orElseThrow(CollectionNotFoundException::new);
         securityContextService.validaDonoOuAdmin(c.getUsuario());
@@ -98,6 +100,7 @@ public class MangaService {
 
     }
 
+    @Transactional
     public MangaResponseDTO update(Long id, UpdateMangaDTO request){
 
         Manga m = mangaRepository.findById(id).orElseThrow(MangaNotFoundException::new);
@@ -155,6 +158,7 @@ public class MangaService {
         return titulo.trim();
     }
 
+    @Transactional
     public void delete(Long id){
         Manga manga = mangaRepository.findById(id).orElseThrow(MangaNotFoundException::new);
         securityContextService.validaDonoOuAdmin(manga.getColecao().getUsuario());

@@ -34,6 +34,7 @@ public class CurtidaService {
     }
 
     //Coleções
+    @Transactional
     public void curtirColecao(Long colecaoId) {
         Usuario usuarioLogado = securityContextService.getUsuarioLogado();
         Colecao colecao = colecaoRepository.findById(colecaoId).orElseThrow(CollectionNotFoundException::new);
@@ -71,6 +72,7 @@ public class CurtidaService {
     }
 
     //Usuarios
+    @Transactional
     public UsuarioCurtidaResponseDTO totalCurtidasUsuario(Long usuarioId){
         Usuario usuario = usuarioRepository.findById(usuarioId).orElseThrow(UserNotFoundException::new);
         Integer qtdCurtidas = curtidaRepository.countByUsuarioId(usuarioId);

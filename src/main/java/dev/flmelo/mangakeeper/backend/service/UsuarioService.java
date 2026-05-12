@@ -50,6 +50,7 @@ public class UsuarioService {
     }
 
 
+    @Transactional
     public UsuarioResponseDTO updateUsuario(Long id, UpdateUsuarioDTO usuarioUpdate) {
         Usuario alvo = usuarioRepository.findById(id).orElseThrow(UserNotFoundException::new);
         

@@ -11,6 +11,7 @@ import dev.flmelo.mangakeeper.backend.exceptions.VolumeNotFoundException;
 import dev.flmelo.mangakeeper.backend.repository.MangaRepository;
 import dev.flmelo.mangakeeper.backend.repository.VolumeRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -51,6 +52,7 @@ public class VolumeService {
         );
     }
 
+    @Transactional
     public VolumeResponseDTO create(CreateVolumeDTO request){
         Manga m = mangaRepository.findById(request.mangaId()).orElseThrow(MangaNotFoundException::new);
         securityContextService.validaDonoOuAdmin(m.getColecao().getUsuario());
@@ -73,6 +75,7 @@ public class VolumeService {
                 volumeSalvo.getImagemUrl());
     }
 
+    @Transactional
     public VolumeResponseDTO update(Long id, UpdateVolumeDTO request){
         Volume volumeAtualizado = volumeRepository.findById(id).orElseThrow(VolumeNotFoundException::new);
         securityContextService.validaDonoOuAdmin(volumeAtualizado.getManga().getColecao().getUsuario());
@@ -101,6 +104,7 @@ public class VolumeService {
 
     }
 
+    @Transactional
     public void delete(Long id){
         Volume volume = volumeRepository.findById(id).orElseThrow(VolumeNotFoundException::new);
         securityContextService.validaDonoOuAdmin(volume.getManga().getColecao().getUsuario());
