@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-public class CloudinaryController {
+public class UploadController {
 
     @Autowired
     private CloudinaryService cloudinaryService;
