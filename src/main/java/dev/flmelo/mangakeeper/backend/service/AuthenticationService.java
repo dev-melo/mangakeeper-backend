@@ -40,7 +40,11 @@ public class AuthenticationService {
             throw new UserAlreadyExistsException();
         }
         String encryptedPassword = new BCryptPasswordEncoder().encode(data.password());
-        Usuario newUser = new Usuario(data.login().toLowerCase(Locale.ROOT), data.email(), encryptedPassword,  data.avatarUrl());
+        Usuario newUser = new Usuario(
+                data.login().toLowerCase(Locale.ROOT),
+                data.email(),
+                encryptedPassword,
+                data.avatarUrl());
         RoleModel role = roleRepository.findByRoleName(RoleName.ROLE_USER)
                 .orElseThrow(() -> new RuntimeException("Role não Encontrada"));
         newUser.setRoles(List.of(role));
